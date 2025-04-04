@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package api;
+
+
+option go_package = "/proto/api;api";
+
+
+message RegenerateRequest {
+    string user_id = 1;
+}
+
+
+message GenerateOAuthSignatureRequest {
+    string client_id = 1;
+    string client_pin =2;
+    string secret_key =3;
+    string user_id =4;
+}
+
+
+message SetPinRequest {
+    string user_id = 1;
+    string pin = 2;
+}
+
+
+message UpdatePinRequest {
+    string user_id = 1;
+    string newPin = 2;
+}
+
+
+message APICredentials {
+    string clientSecret =1;
+    string clientID =2;
+    string clientSignature =3;
+    string user_id =4;
+}
+
+
+message GetCredentialsRequest {
+    string user_id = 1;
+}
+
+
+message GetResponse {
+    APICredentials aPICredentials = 1;
+}

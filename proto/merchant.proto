@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package merchant;
+
+
+option go_package = "/proto/merchant;merchant";
+
+
+message RegisterRequest {
+    string user_id = 1;
+    string name = 2;
+    string email = 3;
+    string location = 4;
+    string tpin = 5;
+    string phone = 6;
+    bytes file1 = 7;
+    bytes file2 = 8;
+    bytes file3 = 9;
+}
+
+
+message Merchant {
+    string user_id = 1;
+    string name = 2;
+    string email = 3;
+    string location = 4;
+    string tpin = 5;
+    string phone = 6;
+    string file1 = 7;
+    string file2 = 8;
+    string file3 = 9;
+    string merchant_id=10;
+    string status =11;
+}
+
+
+message GetMerchantsRequest {
+    int32 page =1;
+    int32 pageSize =2;
+    string status=3;
+}
+
+message GetMerchantsResponse {
+    repeated Merchant merchant = 1;       // List of Merchants
+    int32 totalPages = 2;         // Total number of pages
+    int32 currentPage = 3;        // Current page
+    bool hasMore = 4;             // Whether there are more pages
+  }
+
+message EditMerchantRequest {
+    string user_id = 1;
+    string name = 2;
+    string email = 3;
+    string location = 4;
+    string tpin = 5;
+    string phone = 6;
+    bytes file1 = 7;
+    bytes file2 = 8;
+    bytes file3 = 9;
+    string merchant_id=10;
+    string status =11;
+}
+
+
+
+message LoginRequest{
+    string email =1;
+    string password = 2;
+}
+
+message MerchantResponse {
+    string kycStatus = 1;
+    string merchant_id = 2;
+    repeated string projectspermissions = 3;
+}
