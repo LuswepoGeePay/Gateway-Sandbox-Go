@@ -30,6 +30,7 @@ func InitDB() {
 		&models.Role{},
 		&models.Permission{},
 		&models.Transactions{},
+		&models.CheckOutUrls{},
 	)
 	if err != nil {
 		log.Fatalf("failed to migrate database: %v", err)

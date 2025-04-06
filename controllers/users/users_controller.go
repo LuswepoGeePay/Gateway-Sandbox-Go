@@ -1,6 +1,11 @@
 package users
 
 import (
+	"io/ioutil"
+	"log"
+	"net/http"
+	"pg_sandbox/proto/api"
+	credentialsservices "pg_sandbox/services/credentials_services"
 	tokenservices "pg_sandbox/services/token_services"
 	userservices "pg_sandbox/services/user_services"
 	"pg_sandbox/utils"
@@ -62,4 +67,37 @@ func NameLookUpHandler(c *gin.Context) {
 
 	userservices.NameLookUp(c, number)
 
+}
+
+func SetFloatBalanceHander(c *gin.Context) {
+
+	var req api.UpdateFloatReuest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.RespondWithError(c, 400, utils.FailBind)
+		return
+	}
+
+	err := credentialsservices.SetFloatBalance(c, &req)
+
+	if err != nil {
+		utils.RespondWithError(c, 400, "Unable to set/update float balance", err.Error())
+		return
+	}
+
+	utils.RespondWithSuccess(c, "Float Updated successfully")
+
+}
+
+func CallbackHandler(c *gin.Context) {
+	body, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Printf("Error reading body: %v", err)
+		c.String(http.StatusBadRequest, "can't read body")
+		return
+	}
+	defer c.Request.Body.Close()
+
+	log.Printf("Received callback: %s", string(body))
+	c.String(http.StatusOK, "Callback received")
 }

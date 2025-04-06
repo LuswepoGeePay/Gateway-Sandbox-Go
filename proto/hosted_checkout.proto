@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package hcheckout;
+
+
+option go_package = "/proto/hcheckout;hcheckout";
+
+
+message HCheckoutRequest {
+    string checkout_base_url = 1;
+    string order_id =2;
+    string amount = 3; // Uncomment if needed
+    Customer customer = 4;
+    RedirectUrls redirect_urls = 5;
+}
+
+  // Nested message for customer info
+  message Customer {
+    string name = 1;
+    string email = 2;
+  }
+  
+  // Nested message for redirect URLs
+  message RedirectUrls {
+    string success = 1;
+    string failure = 2;
+    string cancel = 3;
+  }
+
+  message HCheckout {
+    string checkout_url = 1;
+    string order_id =2;
+    string amount = 3; // Uncomment if needed
+    Customer customer = 4;
+    RedirectUrls redirect_urls = 5;
+    string checkoutID =6;
+}
+

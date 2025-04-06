@@ -49,3 +49,11 @@ type GetRepliesRequest struct {
 	GetRequest
 	ReviewID string `json:"reviewID,omitempty"`
 }
+
+type CallbackPayload struct {
+	Code          int    `json:"code"`
+	Status        string `json:"status"`
+	Message       string `json:"message"`
+	TransactionID string `json:"transaction_id"`
+	ExternalID    string `json:"external_id"`
+}

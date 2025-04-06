@@ -29,5 +29,6 @@ func GetAPICredentials(userID string) (*api.APICredentials, error) {
 		ClientSecret:    apiKeys.ClientSecret,
 		ClientID:        apiKeys.ClientID,
 		ClientSignature: apiKeys.OAuthSignature,
+		FloatBalance:    apiKeys.FloatBalance,
 	}, nil
 }

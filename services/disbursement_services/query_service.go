@@ -1,0 +1,83 @@
+package disbursementservices
+
+import (
+	"pg_sandbox/config"
+	"pg_sandbox/models"
+
+	"github.com/gin-gonic/gin"
+)
+
+func QueryDisbursement(c *gin.Context, xClientID string, xAuthSig string, Tref string) {
+
+	var existingClientID models.ApiKeys
+
+	result := config.DB.Where("client_id = ?", xClientID).First(&existingClientID)
+
+	if result.Error != nil {
+		c.JSON(422, gin.H{
+			"code":    422,
+			"status":  "error",
+			"message": "Validation failed.",
+			"errors": gin.H{
+				"X-Client-ID": []string{"The selected x-client-id is invalid."},
+			},
+		})
+		return
+	}
+
+	var existingAuthSig models.ApiKeys
+
+	result = config.DB.Where("o_auth_signature = ?", xAuthSig).First(&existingAuthSig)
+
+	if result.Error != nil {
+		c.JSON(422, gin.H{
+			"code":    422,
+			"status":  "error",
+			"message": "Validation failed.",
+			"errors": gin.H{
+				"X-Auth-Signature": []string{"The selected x-auth-signature is invalid."},
+			},
+		})
+		return
+	}
+
+	var transaction models.Transactions
+
+	if Tref == "" {
+		c.JSON(400, gin.H{
+			"code":    400,
+			"status":  "failed",
+			"message": "Invalid Transaction Reference",
+			"error":   []string{"Transaction Reference is invalid"},
+		})
+		return
+
+	}
+
+	result = config.DB.Where("reference = ? AND type = ?", Tref, "disbursement").First(&transaction)
+
+	if result.Error != nil {
+		c.JSON(404, gin.H{
+			"code":    404,
+			"status":  "failed",
+			"message": "Transaction Not Found",
+			"error":   gin.H{"Transaction Reference": []string{"Transaction Reference is invalid"}},
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"code":    200,
+		"status":  "success",
+		"message": "Disbursement Status Retrieved",
+		"data": gin.H{
+			"status":    transaction.Status,
+			"amount":    transaction.Amount,
+			"customer":  transaction.Customer,
+			"channel":   transaction.Channel,
+			"date":      transaction.Date,
+			"narration": transaction.Narration,
+		},
+	})
+
+}

@@ -4,6 +4,7 @@ import (
 	"pg_sandbox/controllers/auth"
 	"pg_sandbox/controllers/collection"
 	"pg_sandbox/controllers/disbursement"
+	hostedcheckout "pg_sandbox/controllers/hosted_checkout"
 	"pg_sandbox/controllers/transactions"
 	"pg_sandbox/controllers/users"
 	"pg_sandbox/middleware"
@@ -42,4 +43,9 @@ func SetupRoutes(r *gin.Engine) {
 	r.GET("/v1/mobile-money/name-lookup/:number", users.NameLookUpHandler)
 	r.POST("/v1/mobile-money/disburse", disbursement.MakeDisbursementHandler)
 	r.GET("/v1/mobile-money/disburse/status/:reference", disbursement.QueryDisbursementHandler)
+	au.POST("/float/update", users.SetFloatBalanceHander)
+	r.POST("/v1/checkout/session", hostedcheckout.HostedCheckOutHandler)
+	r.GET("/v1/checkout/get/:id", hostedcheckout.GetHostedCheckoutDetailsHandler)
+	r.POST("/callback", users.CallbackHandler)
+	r.POST("/v1/checkout/respond", hostedcheckout.HostedCheckoutResponseHandler)
 }

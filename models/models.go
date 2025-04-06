@@ -42,7 +42,7 @@ type ApiKeys struct {
 	IsActive       bool      `gorm:"default:true"`
 	PIN            string    `gorm:"default:null"`
 	OAuthSignature string    `gorm:"default:null"`
-	CallBackURL    string    `gorm:"default:null"`
+	FloatBalance   string    `gorm:"default:null"`
 	gorm.Model
 }
 
@@ -76,4 +76,19 @@ type Transactions struct {
 	Type      string    `gorm:"not null"`
 	Narration string    `gorm:"default:null"`
 	Date      time.Time
+	gorm.Model
+}
+
+type CheckOutUrls struct {
+	ID            uuid.UUID `gorm:"type:uuid;primary_key"`
+	OrderID       string    `gorm:"default:null"`
+	CustomerName  string    `gorm:"default:null"`
+	CustomerEmail string    `gorm:"default:null"`
+	SuccessUrl    string    `gorm:"default:null"`
+	FailedUrl     string    `gorm:"default:null"`
+	CancelUrl     string    `gorm:"default:null"`
+	Amount        string    `gorm:"default:null"`
+	GeneratedUrl  string    `gorm:"default:null"`
+	TReference    string    `gorm:"default:null"`
+	gorm.Model
 }
