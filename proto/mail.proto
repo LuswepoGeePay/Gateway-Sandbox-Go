@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package mail;
+
+
+option go_package = "/proto/mail;mail";
+
+
+message SendMailRequest {
+    string to = 1;
+    string code = 2;
+    string subject = 3;
+    string body = 4;
+    string userID =5;
+}
+
+
+message SendMailWithAttachmentRequest {
+    string to = 1;
+    string code = 2;
+    string subject = 3;
+    string body = 4;
+    bytes attachment = 5;
+    string from =6;
+}
+
+message VerifyEmail {
+    string userID =1;
+    string code =2;
+    string email =3;
+}

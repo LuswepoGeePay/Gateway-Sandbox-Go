@@ -17,10 +17,10 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	details, err := authservices.LoginUser(&req)
+	details, code, err := authservices.LoginUser(&req)
 
 	if err != nil {
-		utils.RespondWithError(c, 400, "Failed to login", err.Error())
+		utils.RespondWithError(c, code, "Failed to login", err.Error())
 		return
 	}
 

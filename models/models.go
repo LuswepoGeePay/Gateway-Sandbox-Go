@@ -92,3 +92,15 @@ type CheckOutUrls struct {
 	TReference    string    `gorm:"default:null"`
 	gorm.Model
 }
+
+type APILogs struct {
+	ID     uuid.UUID `gorm:"type:uuid;primary_key"`
+	UserID uuid.UUID `gorm:"type:uuid;not null"`
+	User   User      `gorm:"foreignKey:UserID"`
+}
+
+type ActivityLogs struct {
+	ID     uuid.UUID `gorm:"type:uuid;primary_key"`
+	UserID uuid.UUID `gorm:"type:uuid;not null"`
+	User   User      `gorm:"foreignKey:UserID"`
+}

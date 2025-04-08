@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"pg_sandbox/proto/api"
+	"pg_sandbox/proto/user"
 	credentialsservices "pg_sandbox/services/credentials_services"
 	tokenservices "pg_sandbox/services/token_services"
 	userservices "pg_sandbox/services/user_services"
@@ -100,4 +101,23 @@ func CallbackHandler(c *gin.Context) {
 
 	log.Printf("Received callback: %s", string(body))
 	c.String(http.StatusOK, "Callback received")
+}
+
+func ResetPasswordHandler(c *gin.Context) {
+	var req user.ResetPassword
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		utils.RespondWithError(c, 400, utils.FailBind)
+		return
+	}
+
+	err = userservices.ResetPassword(&req)
+
+	if err != nil {
+		utils.RespondWithError(c, 400, "Failed to reset password.", err.Error())
+		return
+	}
+
+	utils.RespondWithSuccess(c, "Password has been reset successfully")
 }

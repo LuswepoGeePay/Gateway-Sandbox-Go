@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package user;
+
+
+option go_package = "/proto/user;user";
+
+
+message ResetPassword {
+    string user_id =1;
+    string password =2;
+    string confirm_password=3;
+    string email =4;
+    bool loggedIn =5;
+}

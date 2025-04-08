@@ -51,3 +51,9 @@ func GenerateTenDigitCode() string {
 	code := rand.Intn(9000000000) + 100000000
 	return fmt.Sprintf("%d", code)
 }
+
+func GenerateSixDigitCode() string {
+	rand.Seed(time.Now().UnixNano())
+	code := rand.Intn(900000) + 100000
+	return fmt.Sprintf("%d", code)
+}

@@ -5,6 +5,8 @@ import (
 	"pg_sandbox/controllers/collection"
 	"pg_sandbox/controllers/disbursement"
 	hostedcheckout "pg_sandbox/controllers/hosted_checkout"
+	"pg_sandbox/controllers/mail"
+
 	"pg_sandbox/controllers/transactions"
 	"pg_sandbox/controllers/users"
 	"pg_sandbox/middleware"
@@ -20,6 +22,10 @@ func SetupRoutes(r *gin.Engine) {
 	// Dynamic routes initialization
 	//dynamiccontrollers.LoadDynamicRoutes(r)
 
+	//emails
+	r.POST("/v1/request/code", mail.SendMailHandler)
+	r.POST("/v1/verify/code", mail.VerifyCode)
+
 	// Authorized routes group
 	au := r.Group("/v1")
 	au.Use(middleware.AuthorizationMiddleWare())
@@ -30,6 +36,8 @@ func SetupRoutes(r *gin.Engine) {
 
 	// User routes
 	au.POST("/users/get", auth.GetUsersHandler)
+	au.POST("/user/edit", auth.EditUserHandler)
+	au.POST("/merchants/get", auth.GetMerchantsHandler)
 
 	r.POST("/v1/make-collection", collection.MakeCollectionHandler)
 	r.POST("/v1/make-disbursement", disbursement.MakeDisbursementHandler)
@@ -48,4 +56,5 @@ func SetupRoutes(r *gin.Engine) {
 	r.GET("/v1/checkout/get/:id", hostedcheckout.GetHostedCheckoutDetailsHandler)
 	r.POST("/callback", users.CallbackHandler)
 	r.POST("/v1/checkout/respond", hostedcheckout.HostedCheckoutResponseHandler)
+	r.POST("/v1/reset/password", users.ResetPasswordHandler)
 }
