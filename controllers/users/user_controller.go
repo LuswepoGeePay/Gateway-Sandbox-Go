@@ -121,3 +121,18 @@ func ResetPasswordHandler(c *gin.Context) {
 
 	utils.RespondWithSuccess(c, "Password has been reset successfully")
 }
+
+func GetUserProfileHandler(c *gin.Context) {
+	userId := c.Param("id")
+
+	user, err := userservices.GetUserProfile(userId)
+
+	if err != nil {
+		utils.RespondWithError(c, 400, "Unable to fetch profile", err.Error())
+		return
+	}
+
+	utils.RespondWithSuccess(c, "Retrieved user", gin.H{
+		"user": user,
+	})
+}

@@ -38,6 +38,7 @@ func SetupRoutes(r *gin.Engine) {
 	au.POST("/users/get", auth.GetUsersHandler)
 	au.POST("/user/edit", auth.EditUserHandler)
 	au.POST("/merchants/get", auth.GetMerchantsHandler)
+	au.GET("/user/get/:id", users.GetUserProfileHandler)
 
 	r.POST("/v1/make-collection", collection.MakeCollectionHandler)
 	r.POST("/v1/make-disbursement", disbursement.MakeDisbursementHandler)

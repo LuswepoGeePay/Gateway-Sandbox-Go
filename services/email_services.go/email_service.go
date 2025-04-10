@@ -14,21 +14,15 @@ import (
 
 func SendCodeMail(req *mail.SendMailRequest) error {
 
-	// emailTemp := os.Getenv("EMAIL_TEMPLATE_FILE")
-
-	// if emailTemp == "" {
-	// 	return utils.CapitalizeError("EMAIL_TEMPLATE_FILE environment variable is not set")
-	// }
-
 	emailTemplate, err := template.ParseFiles("./email_template.html")
 
 	if err != nil {
 		return err
 	}
 
-	var body bytes.Buffer
-
 	code := utils.GenerateSixDigitCode()
+
+	var body bytes.Buffer
 
 	err = emailTemplate.Execute(&body, struct{ Name string }{Name: code})
 

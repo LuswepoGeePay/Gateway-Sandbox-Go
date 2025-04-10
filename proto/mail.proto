@@ -12,6 +12,8 @@ message SendMailRequest {
     string subject = 3;
     string body = 4;
     string userID =5;
+    bool is_email =6;
+    bool is_password =7;
 }
 
 

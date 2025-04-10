@@ -13,3 +13,13 @@ message ResetPassword {
     string email =4;
     bool loggedIn =5;
 }
+
+
+message User {
+    string fullname =1;
+    string email =2;
+    string phone =3;
+    string status =4;
+    bool email_verified =5;
+
+}
