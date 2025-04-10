@@ -2,10 +2,9 @@ package hostedcheckout
 
 import (
 	"pg_sandbox/proto/hcheckout"
+	commonservices "pg_sandbox/services/common_services"
 	hostedcheckoutservices "pg_sandbox/services/hosted_checkout_services"
-	tokenservices "pg_sandbox/services/token_services"
 	"pg_sandbox/utils"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,24 +14,10 @@ func HostedCheckOutHandler(c *gin.Context) {
 	xClientID := c.GetHeader("X-Client-Id")
 	xTRef := c.GetHeader("X-Transaction-Ref")
 	xCallbackUrl := c.GetHeader("X-Callback-URL")
-	authorization := c.GetHeader("Authorization")
-	acceptedH := c.GetHeader("Accept")
-	contentType := c.GetHeader("Content-Type")
 
-	if authorization == "" {
-		c.JSON(400, gin.H{
-			"message": "unauthenticated",
-		})
+	commonservices.CheckEssentialHeaders(c)
 
-		return
-	}
-
-	tokenString := strings.TrimPrefix(authorization, "Bearer ")
-
-	err := tokenservices.ValidateOAuthToken(tokenString)
-	if err != nil {
-		utils.RespondWithError(c, 401, "Invalid Token")
-		c.Abort()
+	if c.IsAborted() {
 		return
 	}
 
@@ -49,32 +34,6 @@ func HostedCheckOutHandler(c *gin.Context) {
 
 		return
 
-	}
-
-	if contentType != "application/json" {
-		c.JSON(400, gin.H{
-			"code":    400,
-			"status":  "error",
-			"message": "Validation failed.",
-			"errors": gin.H{
-				"Content-Type": []string{"Expected Content-Type is application/json"},
-			},
-		})
-
-		return
-	}
-
-	if acceptedH != "application/json" {
-		c.JSON(400, gin.H{
-			"code":    400,
-			"status":  "error",
-			"message": "Validation failed.",
-			"errors": gin.H{
-				"Content-Type": []string{"Expected Accept is application/json"},
-			},
-		})
-
-		return
 	}
 
 	hostedcheckoutservices.GenerateCheckoutUrl(c, &req, xClientID, xTRef, xCallbackUrl)
