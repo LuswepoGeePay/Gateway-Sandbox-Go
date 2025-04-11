@@ -58,4 +58,30 @@ func GetHostedCheckoutDetailsHandler(c *gin.Context) {
 
 func HostedCheckoutResponseHandler(c *gin.Context) {
 
+	testCondition := c.Param("condition")
+
+	if testCondition == "1" {
+
+		utils.RespondWithSuccess(c, "Payment processed successfully")
+		c.Abort()
+		return
+
+	}
+
+	if testCondition == "2" {
+		c.JSON(406, gin.H{
+			"status":  "cancelled",
+			"message": "Payment was cancelled",
+		})
+		c.Abort()
+		return
+
+	}
+
+	if testCondition == "3" {
+		utils.RespondWithError(c, 400, "Failed to process payment")
+		c.Abort()
+		return
+	}
+
 }

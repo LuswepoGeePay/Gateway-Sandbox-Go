@@ -18,8 +18,8 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 	result := config.DB.Where("client_id = ?", xClientId).First(&existingClientID)
 
 	if result.Error != nil {
-		c.JSON(422, gin.H{
-			"code":    422,
+		c.JSON(402, gin.H{
+			"code":    402,
 			"status":  "error",
 			"message": "Validation failed.",
 			"errors": gin.H{
@@ -30,8 +30,8 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 	}
 
 	if strings.TrimSpace(xTransactionRef) == "" {
-		c.JSON(400, gin.H{
-			"code":    400,
+		c.JSON(402, gin.H{
+			"code":    402,
 			"status":  "error",
 			"message": "Validation failed.",
 			"errors": gin.H{
@@ -120,8 +120,8 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 			"status":  "pending",
 			"message": "Request sent. Awaiting customer action.",
 			"data": gin.H{
-				"transaction_id": xTransactionRef,
-				"external_id":    tCode,
+				"transaction_reference": xTransactionRef,
+				"external_reference":    tCode,
 			},
 		})
 		return
@@ -130,11 +130,11 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 	if network == "zamtel" {
 		c.JSON(200, gin.H{
 			"code":    200,
-			"status":  "successful",
-			"message": "Process service request successfully.",
+			"status":  "success",
+			"message": "Payment was successful",
 			"data": gin.H{
-				"transaction_id": xTransactionRef,
-				"external_id":    tCode,
+				"transaction_reference": xTransactionRef,
+				"external_reference":    tCode,
 			},
 		})
 		return

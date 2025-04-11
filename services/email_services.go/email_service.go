@@ -2,10 +2,13 @@ package services
 
 import (
 	"bytes"
+	"context"
+	"crypto/tls"
 	"pg_sandbox/config"
 	"pg_sandbox/models"
 	"pg_sandbox/proto/mail"
 	"pg_sandbox/utils"
+	"time"
 
 	"html/template"
 
@@ -31,12 +34,29 @@ func SendCodeMail(req *mail.SendMailRequest) error {
 	}
 
 	m := gomail.NewMessage()
-	m.SetHeader("From", "luswepo17@gmail.com")
+	m.SetHeader("From", "noreply@mygeepay.com")
 	m.SetHeader("To", req.To)
 	m.SetHeader("Subject", req.Subject)
 	m.SetBody("text/html", body.String())
 
-	d := gomail.NewDialer("smtp.gmail.com", 587, "luswepo17@gmail.com", "dqiemeknokcbuexh")
+	// d := gomail.NewDialer(
+	// 	"smtp.gmail.com",
+	// 	587,
+	// 	"luswepo17@gmail.com",
+	// 	"dqiemeknokcbuexh")
+	d := gomail.NewDialer(
+		"mail.mygeepay.com",    // MAIL_HOST
+		465,                    // MAIL_PORT
+		"noreply@mygeepay.com", // MAIL_USERNAME
+		"615@4D!V9l8ef58I6jdA", // MAIL_PASSWORD
+	)
+	d.SSL = true
+	d.TLSConfig = &tls.Config{ServerName: "mail.mygeepay.com"}
+
+	// Add timeout
+	_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	if err := d.DialAndSend(m); err != nil {
 		return err
 	}

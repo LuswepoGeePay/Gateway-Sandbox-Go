@@ -20,7 +20,7 @@ func AuthorizationHandler(c *gin.Context) {
 	response, err := tokenservices.GenerateOAuthToken(&req)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 

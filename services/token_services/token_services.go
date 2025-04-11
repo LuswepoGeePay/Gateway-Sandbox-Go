@@ -14,6 +14,10 @@ var jwtSecret = []byte("SuperSecretKeyForARobustSystem")
 
 func GenerateOAuthToken(req *pbToken.TokenRequest) (*pbToken.TokenResponse, error) {
 
+	if req.GrantType != "client_credentials" {
+		return nil, utils.CapitalizeError("invalid Grant Type")
+	}
+
 	var apiKey models.ApiKeys
 
 	tx := config.DB.Begin()

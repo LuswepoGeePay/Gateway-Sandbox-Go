@@ -40,9 +40,9 @@ func SetupRoutes(r *gin.Engine) {
 	au.POST("/merchants/get", auth.GetMerchantsHandler)
 	au.GET("/user/get/:id", users.GetUserProfileHandler)
 
-	r.POST("/v1/make-collection", collection.MakeCollectionHandler)
+	r.POST("/v1/mobile-money/collect", collection.MakeCollectionHandler)
 	r.POST("/v1/make-disbursement", disbursement.MakeDisbursementHandler)
-	r.POST("/v1/token-generate", auth.AuthorizationHandler)
+	r.POST("/v1/oauth/token", auth.AuthorizationHandler)
 
 	au.POST("/secret/generate", auth.GenerateSecretHandler)
 	au.POST("/signature/generate", auth.GenerateOAuthSignatureHandler)
@@ -56,6 +56,7 @@ func SetupRoutes(r *gin.Engine) {
 	r.POST("/v1/checkout/session", hostedcheckout.HostedCheckOutHandler)
 	r.GET("/v1/checkout/get/:id", hostedcheckout.GetHostedCheckoutDetailsHandler)
 	r.POST("/callback", users.CallbackHandler)
-	r.POST("/v1/checkout/respond", hostedcheckout.HostedCheckoutResponseHandler)
+	r.POST("/v1/checkout/respond/:condition", hostedcheckout.HostedCheckoutResponseHandler)
 	r.POST("/v1/reset/password", users.ResetPasswordHandler)
+	r.GET("/v1/mobile-money/disburse/balance", disbursement.CheckDisbursementBalance)
 }

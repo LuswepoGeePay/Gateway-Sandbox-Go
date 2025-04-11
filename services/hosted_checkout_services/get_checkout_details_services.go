@@ -21,7 +21,7 @@ func GetCheckoutDetails(checkoutID string) (*hcheckout.HCheckout, error) {
 		CheckoutUrl: checkout.GeneratedUrl,
 		OrderId:     checkout.OrderID,
 		Customer: &hcheckout.Customer{
-			Name:  checkout.CustomerEmail,
+			Name:  checkout.CustomerName,
 			Email: checkout.CustomerEmail,
 		},
 		RedirectUrls: &hcheckout.RedirectUrls{

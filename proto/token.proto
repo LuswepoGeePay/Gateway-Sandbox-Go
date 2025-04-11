@@ -7,8 +7,10 @@ option go_package = "/proto/token;token";
 
 
 message TokenRequest {
-    string client_id = 1;
-    string client_secret = 2;
+    string grant_type = 1;
+    string client_id = 2;
+    string client_secret = 3;
+    
 }
 
 

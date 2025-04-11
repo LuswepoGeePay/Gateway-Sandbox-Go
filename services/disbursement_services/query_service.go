@@ -69,14 +69,10 @@ func QueryDisbursement(c *gin.Context, xClientID string, xAuthSig string, Tref s
 	c.JSON(200, gin.H{
 		"code":    200,
 		"status":  "success",
-		"message": "Disbursement Status Retrieved",
+		"message": "Disbursement status fetched successfully.",
 		"data": gin.H{
-			"status":    transaction.Status,
-			"amount":    transaction.Amount,
-			"customer":  transaction.Customer,
-			"channel":   transaction.Channel,
-			"date":      transaction.Date,
-			"narration": transaction.Narration,
+			"status":                transaction.Status,
+			"transaction_reference": transaction.Reference,
 		},
 	})
 

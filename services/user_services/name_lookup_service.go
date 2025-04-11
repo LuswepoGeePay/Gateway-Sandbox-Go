@@ -27,9 +27,12 @@ func NameLookUp(c *gin.Context, phoneNumber string) {
 		c.JSON(200, gin.H{
 			"code":    "200",
 			"status":  "success",
-			"message": "Names retrieved successfully",
+			"message": "Name lookup completed successfully.",
 			"data": gin.H{
-				"names": "John MTN Doe",
+				"status":       "success",
+				"provider":     "MTN",
+				"phone_number": phoneNumber,
+				"names":        "John MTN Doe",
 			},
 		})
 		return
@@ -39,9 +42,12 @@ func NameLookUp(c *gin.Context, phoneNumber string) {
 		c.JSON(200, gin.H{
 			"code":    "200",
 			"status":  "success",
-			"message": "Names retrieved successfully",
+			"message": "Name lookup completed successfully.",
 			"data": gin.H{
-				"names": "Alice Airtel Bob",
+				"status":       "success",
+				"provider":     "Airtel",
+				"phone_number": phoneNumber,
+				"names":        "Alice Airtel Bob",
 			},
 		})
 		return
@@ -50,9 +56,12 @@ func NameLookUp(c *gin.Context, phoneNumber string) {
 		c.JSON(200, gin.H{
 			"code":    "200",
 			"status":  "success",
-			"message": "Names retrieved successfully",
+			"message": "Name lookup completed successfully.",
 			"data": gin.H{
-				"names": "Nagato Zamtel Gato",
+				"status":       "success",
+				"provider":     "Zamtel",
+				"phone_number": phoneNumber,
+				"names":        "Nagato Zamtel Gato",
 			},
 		})
 		return
