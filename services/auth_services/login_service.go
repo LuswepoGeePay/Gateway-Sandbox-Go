@@ -2,6 +2,7 @@ package authservices
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"pg_sandbox/config"
 	"pg_sandbox/models"
@@ -20,8 +21,9 @@ func LoginUser(req *auth.LoginRequest) (*auth.AuthResponse, int, error) {
 	// First check if user exists
 	result := config.DB.Preload("Role.Permissions").Where("email = ?", req.Email).First(&user)
 	if result.Error != nil {
-
+		utils.Log(slog.LevelError, "❌Error", "Unable to Login", "detail", result.Error.Error())
 		if result.Error == gorm.ErrRecordNotFound {
+
 			return nil, http.StatusUnauthorized, utils.CapitalizeError("Invalid email or password")
 		}
 		return nil, http.StatusInternalServerError, utils.CapitalizeError(result.Error.Error())

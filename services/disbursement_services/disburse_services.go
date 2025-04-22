@@ -4,9 +4,11 @@ import (
 	"pg_sandbox/config"
 	"pg_sandbox/models"
 	"pg_sandbox/proto/disbursement"
+	"pg_sandbox/services/logs"
 	"pg_sandbox/utils"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -17,8 +19,10 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 	var existingClient models.ApiKeys
 
 	result := config.DB.Where("client_id = ?", xClientID).First(&existingClient)
+	start := time.Now()
 
 	if result.Error != nil {
+
 		c.JSON(422, gin.H{
 			"code":    422,
 			"status":  "error",
@@ -35,6 +39,9 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 	result = config.DB.Where("o_auth_signature = ?", xAuthSignature).First(&existingAuthSig)
 
 	if result.Error != nil {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(422, gin.H{
 			"code":    422,
 			"status":  "error",
@@ -63,6 +70,9 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 	result = config.DB.Where("reference = ?", xTref).First(&existingTransaction)
 
 	if result.Error == nil { // Only return an error if the transaction exists
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(422, gin.H{
 			"code":    422,
 			"status":  "error",
@@ -79,6 +89,9 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 	// tCode := utils.GenerateTenDigitCode()
 
 	if err != nil {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(400, gin.H{
 			"code":    400,
 			"status":  "error",
@@ -91,6 +104,8 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 	}
 
 	if req.Amount == "" {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
 
 		c.JSON(400, gin.H{
 			"code":    400,
@@ -108,6 +123,10 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 	tCode := utils.GenerateTenDigitCode()
 
 	if err != nil {
+
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(400, gin.H{
 			"code":    400,
 			"status":  "error",
@@ -120,6 +139,9 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 	}
 
 	if amountConverted <= 0 {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(400, gin.H{
 			"code":    400,
 			"status":  "error",
@@ -146,6 +168,9 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 	}
 
 	if amountConverted > floatBalancedConverted {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(400, gin.H{
 			"code":    400,
 			"status":  "error",
@@ -161,6 +186,8 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 	result = tx.Model(&models.ApiKeys{}).Where("user_id = ?", existingClient.UserID).Update("float_balance", strconv.FormatFloat(newDisbursementBalance, 'f', -1, 64))
 
 	if result.Error != nil {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
 
 		c.JSON(500, gin.H{
 			"code":    500,
@@ -182,12 +209,16 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 		Status:    "completed",
 		Narration: req.Narration,
 		Type:      "disbursement",
+		Date:      time.Now(),
 	}
 
 	result = tx.Create(&transaction)
 
 	if result.Error != nil {
 		tx.Rollback()
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(500, gin.H{
 			"code":    500,
 			"status":  "error",
@@ -203,7 +234,7 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 		CallbackHandler(xCallbackUrl, models.CallbackPayload{
 			Code:          200,
 			Status:        "successful",
-			Message:       "The shackles have been sent man",
+			Message:       "The funds have been disbursed.",
 			TransactionID: xTref,
 			ExternalID:    tCode,
 		})
@@ -212,6 +243,9 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 	tx.Commit()
 
 	if network == "mtn" || network == "airtel" {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "success", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(200, gin.H{
 			"code":    200,
 			"status":  "successful",
@@ -225,6 +259,9 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 	}
 
 	if network == "zamtel" {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "success", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(200, gin.H{
 			"code":    200,
 			"status":  "successful",

@@ -24,13 +24,14 @@ func InitDB() {
 
 	err = DB.AutoMigrate(
 		&models.User{},
-		&models.Api{},
 		&models.ApiKeys{},
 		&models.Notifications{},
 		&models.Role{},
 		&models.Permission{},
 		&models.Transactions{},
 		&models.CheckOutUrls{},
+		&models.APILogs{},
+		&models.ActivityLogs{},
 	)
 	if err != nil {
 		log.Fatalf("failed to migrate database: %v", err)

@@ -48,7 +48,7 @@ func SendCodeMail(req *mail.SendMailRequest) error {
 		"mail.mygeepay.com",    // MAIL_HOST
 		465,                    // MAIL_PORT
 		"noreply@mygeepay.com", // MAIL_USERNAME
-		"615@4D!V9l8ef58I6jdA", // MAIL_PASSWORD
+		"3qy7TtF!Ob^?",         // MAIL_PASSWORD
 	)
 	d.SSL = true
 	d.TLSConfig = &tls.Config{ServerName: "mail.mygeepay.com"}

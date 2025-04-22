@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -56,4 +57,15 @@ func GenerateSixDigitCode() string {
 	rand.Seed(time.Now().UnixNano())
 	code := rand.Intn(900000) + 100000
 	return fmt.Sprintf("%d", code)
+}
+
+func GetIPAddress(ctx context.Context) string {
+	ip, ok := ctx.Value("ip").(string)
+
+	if !ok {
+		return "unkwown"
+	}
+
+	return ip
+
 }

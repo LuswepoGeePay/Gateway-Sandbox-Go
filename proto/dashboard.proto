@@ -1,0 +1,199 @@
+syntax = "proto3";
+
+package dashboard;
+
+
+option go_package = "/proto/dashboard;dashboard";
+
+
+message OverviewCardInfoResponse {
+    int32 users= 1;
+    int32 merchants = 2;
+    int32 api_requests = 3;
+}
+
+
+message UserStatisticsResponse {
+    int32 users= 1;
+    int32 active_users = 2;
+    int32 inactive_users = 3;
+    int32 adminUsers = 4;
+    int32 merchantUsers =5;
+}
+
+message UserRoleStatisticsResponse {
+    int32 admin_users= 1;
+    int32 merchant_users = 2;
+}
+
+
+
+message MerchantStatisticsResponse {
+    int32 merchants= 1;
+    int32 active_merchants = 2;
+    int32 inactive_merchants = 3;
+    int32 newToday = 4;
+}
+
+
+message TopMerchantsResponse {
+    string merchant_one= 1;
+    string merchant_two = 2;
+    string merchant_three = 3;
+    int32 merchant_one_count= 4;
+    int32 merchant_two_count = 5;
+    int32 merchant_three_count = 6;
+}
+
+
+
+message APIStatisticsResponse {
+    int32 requests= 1;
+    int32 requests_today = 2;
+    int32 error_rate = 3;
+    string endpoint1 = 4;
+    string endpoint2 = 5;
+    string endpoint3 = 6;
+    string endpoint1Count = 7;
+    string endpoint2Count = 8;
+    string endpoint3Count = 9;
+}
+
+
+message APIResTimeStatisticsResponse {
+    string endpoint1 = 1;
+    string endpoint2 = 2;
+    string endpoint3 = 3;
+    string endpoint1Time = 7;
+    string endpoint2Time = 8;
+    string endpoint3Time = 9;
+}
+
+
+
+
+message TransactionStatisticsResponse {
+    int32 transactions= 1;
+    int32 successful = 2;
+    int32 failed = 3;
+    int32 pending = 4;
+    int32 totalAmount =5;
+}
+
+
+message TransactionChannelsResponse {
+    int32 mtn= 1;
+    int32 zamtel = 2;
+    int32 airtel = 3;
+}
+
+
+
+
+message User {
+    string fullname = 1;
+    string email = 2;
+    string phone = 3;
+    string password = 4;
+    string role = 5;
+    string id =6;
+    string status =7;
+}
+
+
+message Transaction {
+    string reference = 1;
+    string amount = 2;
+    string customer = 3;
+    string channel = 4;
+    string type = 5;
+    string id =6;
+    string status =7;
+    string narration =8;
+    string date =9;
+}
+
+
+message API {
+    string user_id = 1;
+    string status = 2;
+    string endpoint = 3;
+    string method = 4;
+    string ipaddress = 5;
+    string id =6;
+    string response_time =7;
+}
+
+
+
+message GetTransactionsRequest {
+    int32 page =1;
+    int32 pageSize =2;
+  
+}
+
+message GetTransactionsResponse {
+    repeated Transaction transaction = 1;       // List of users
+    int32 totalPages = 2;         // Total number of pages
+    int32 currentPage = 3;        // Current page
+    bool hasMore = 4;             // Whether there are more pages
+  }
+
+
+
+  message GetUsersRequest {
+    int32 page =1;
+    int32 pageSize =2;
+  
+}
+
+message GetUsersResponse {
+    repeated User user = 1;       // List of users
+    int32 totalPages = 2;         // Total number of pages
+    int32 currentPage = 3;        // Current page
+    bool hasMore = 4;             // Whether there are more pages
+  }
+
+
+message GetAPIrequests {
+    int32 page =1;
+    int32 pageSize =2;
+  
+}
+
+message GetAPIReqsResponse {
+    repeated API request = 1;       // List of users
+    int32 totalPages = 2;         // Total number of pages
+    int32 currentPage = 3;        // Current page
+    bool hasMore = 4;             // Whether there are more pages
+  }
+
+message EditUserRequest {
+    string fullname = 1;
+    string email = 2;
+    string phone = 3;
+    string password = 4;
+    string role = 5;
+    string id =6;
+    string status =7;
+}
+
+message LoginRequest{
+    string email =1;
+    string password = 2;
+    string portal =3;
+}
+
+message dashboardResponse {
+    bool success = 1;
+    string message = 2;
+    string token = 3;
+    string status = 4;
+    string role = 5;
+    string id = 6;
+    repeated string permissions = 7; // List of permissions granted to the user
+    string tokenExpiry =9;
+    bool emailVerified =10;
+    string accountStatus =11;
+    string email = 12;
+}

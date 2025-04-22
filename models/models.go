@@ -22,17 +22,6 @@ type User struct {
 	gorm.Model
 }
 
-type Api struct {
-	ID             uuid.UUID `gorm:"type:uuid;primary_key"`
-	ProjectID      uuid.UUID `gorm:"type:uuid;not null"`
-	ApiName        string    `gorm:"not null"`
-	ApiMethod      string    `gorm:"not null"`
-	ApiDescription string    `gorm:"not null"`
-	Endpoint       string    `gorm:"not null"`
-	RequiresAuth   bool      `gorm:"default:false"`
-	gorm.Model
-}
-
 type ApiKeys struct {
 	ID             uuid.UUID `gorm:"type:uuid;primary_key"`
 	UserID         uuid.UUID `gorm:"type:uuid;not null"`
@@ -94,13 +83,24 @@ type CheckOutUrls struct {
 }
 
 type APILogs struct {
-	ID     uuid.UUID `gorm:"type:uuid;primary_key"`
-	UserID uuid.UUID `gorm:"type:uuid;not null"`
-	User   User      `gorm:"foreignKey:UserID"`
+	ID           uuid.UUID `gorm:"type:uuid;primary_key"`
+	UserID       uuid.UUID `gorm:"type:uuid;not null"`
+	User         User      `gorm:"foreignKey:UserID"`
+	Status       string    `gorm:"default:null"`
+	Endpoint     string    `gorm:"default:null"`
+	Method       string    `gorm:"default:null"`
+	IPAddress    string    `gorm:"default:null"`
+	ResponseTime string    `gorm:"default:null"`
+	gorm.Model
 }
 
 type ActivityLogs struct {
-	ID     uuid.UUID `gorm:"type:uuid;primary_key"`
-	UserID uuid.UUID `gorm:"type:uuid;not null"`
-	User   User      `gorm:"foreignKey:UserID"`
+	ID        uuid.UUID `gorm:"type:uuid;primary_key"`
+	UserID    uuid.UUID `gorm:"type:uuid;not null"`
+	User      User      `gorm:"foreignKey:UserID"`
+	Action    string    `gorm:"default:null"`
+	Entity    string    `gorm:"default:null"`
+	EntityID  string    `gorm:"default:null"`
+	IPAddress string    `gorm:"default:null"`
+	gorm.Model
 }

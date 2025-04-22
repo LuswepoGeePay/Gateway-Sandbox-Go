@@ -1,6 +1,7 @@
 package userservices
 
 import (
+	"log/slog"
 	"pg_sandbox/utils"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,7 @@ func NameLookUp(c *gin.Context, phoneNumber string) {
 	network, err := utils.GetNetworkProvider(phoneNumber)
 
 	if err != nil {
+		utils.Log(slog.LevelError, "❌Error", "Validation failed.", "endpoint", "/v1/mobile-money/name-lookup/", "number", phoneNumber)
 		c.JSON(400, gin.H{
 			"code":    400,
 			"status":  "error",
@@ -35,6 +37,7 @@ func NameLookUp(c *gin.Context, phoneNumber string) {
 				"names":        "John MTN Doe",
 			},
 		})
+		utils.Log(slog.LevelInfo, "✅Info", "Name lookup completed successfully.", "endpoint", "/v1/mobile-money/name-lookup/", "number", phoneNumber)
 		return
 	}
 
@@ -50,6 +53,7 @@ func NameLookUp(c *gin.Context, phoneNumber string) {
 				"names":        "Alice Airtel Bob",
 			},
 		})
+		utils.Log(slog.LevelInfo, "✅Info", "Name lookup completed successfully.", "endpoint", "/v1/mobile-money/name-lookup/", "number", phoneNumber)
 		return
 	}
 	if network == "zamtel" {
@@ -64,6 +68,8 @@ func NameLookUp(c *gin.Context, phoneNumber string) {
 				"names":        "Nagato Zamtel Gato",
 			},
 		})
+		utils.Log(slog.LevelInfo, "✅Info", "Name lookup completed successfully.", "endpoint", "/v1/mobile-money/name-lookup/", "number", phoneNumber)
+
 		return
 	}
 

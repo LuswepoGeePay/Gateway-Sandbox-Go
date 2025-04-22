@@ -3,6 +3,7 @@ package routes
 import (
 	"pg_sandbox/controllers/auth"
 	"pg_sandbox/controllers/collection"
+	"pg_sandbox/controllers/dashboard"
 	"pg_sandbox/controllers/disbursement"
 	hostedcheckout "pg_sandbox/controllers/hosted_checkout"
 	"pg_sandbox/controllers/mail"
@@ -59,4 +60,11 @@ func SetupRoutes(r *gin.Engine) {
 	r.POST("/v1/checkout/respond/:condition", hostedcheckout.HostedCheckoutResponseHandler)
 	r.POST("/v1/reset/password", users.ResetPasswordHandler)
 	r.GET("/v1/mobile-money/disburse/balance", disbursement.CheckDisbursementBalance)
+
+	//dashboard
+	au.GET("/overview/cards", dashboard.GetOverviewCardsInfoHandler)
+	au.POST("/dashboard/transactions", dashboard.GetTransactionsHandler)
+	au.POST("/dashboard/requests", dashboard.GetAPIRequestsHandler)
+	au.POST("/dashboard/users", dashboard.GetUsersHandler)
+	au.POST("/dashboard/merchants", dashboard.GetMerchantsHandler)
 }

@@ -1,10 +1,15 @@
 package hostedcheckoutservices
 
 import (
+	"log/slog"
 	"pg_sandbox/config"
 	"pg_sandbox/models"
 	"pg_sandbox/proto/hcheckout"
+	"pg_sandbox/services/logs"
+	"pg_sandbox/utils"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -16,7 +21,10 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 
 	result := config.DB.Where("client_id = ?", xClientID).First(&existingClient)
 
+	start := time.Now()
+
 	if result.Error != nil {
+		utils.Log(slog.LevelError, "Error", "Client ID is invalid")
 		c.JSON(422, gin.H{
 			"code":    422,
 			"status":  "error",
@@ -29,6 +37,9 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 	}
 
 	if strings.TrimSpace(xTref) == "" {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/checkout/session", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(400, gin.H{
 			"code":    400,
 			"status":  "error",
@@ -45,6 +56,9 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 	result = config.DB.Where("reference = ?", xTref).First(&existingTransaction)
 
 	if result.Error == nil { // Only return an error if the transaction exists
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/checkout/session", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(422, gin.H{
 			"code":    422,
 			"status":  "error",
@@ -78,6 +92,9 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 	result = tx.Create(&generatedCheckoutUrl)
 
 	if result.Error != nil {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/checkout/session", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(500, gin.H{
 			"code":    500,
 			"status":  "error",
@@ -96,5 +113,8 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 		"message":      "Checkout session created",
 		"checkout_url": checkoutUrl,
 	})
+
+	elapsed := time.Since(start).Milliseconds()
+	logs.LogApiCall(c, existingClient.UserID.String(), "/v1/checkout/session", "POST", "success", strconv.FormatInt(elapsed, 10))
 
 }

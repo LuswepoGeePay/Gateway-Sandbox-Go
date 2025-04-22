@@ -1,11 +1,15 @@
 package collectionservices
 
 import (
+	"log/slog"
 	"pg_sandbox/config"
 	"pg_sandbox/models"
 	"pg_sandbox/proto/collection"
+	"pg_sandbox/services/logs"
 	"pg_sandbox/utils"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -13,11 +17,16 @@ import (
 
 func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req *collection.CollectionRequest) {
 
+	start := time.Now()
+	// handle logic
+
 	var existingClientID models.ApiKeys
 
 	result := config.DB.Where("client_id = ?", xClientId).First(&existingClientID)
 
 	if result.Error != nil {
+
+		utils.Log(slog.LevelError, "Error", "Client ID is invalid")
 		c.JSON(402, gin.H{
 			"code":    402,
 			"status":  "error",
@@ -30,6 +39,9 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 	}
 
 	if strings.TrimSpace(xTransactionRef) == "" {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(402, gin.H{
 			"code":    402,
 			"status":  "error",
@@ -46,6 +58,9 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 	result = config.DB.Where("reference = ?", xTransactionRef).First(&existingTransaction)
 
 	if result.Error == nil { // Only return an error if the transaction exists
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(422, gin.H{
 			"code":    422,
 			"status":  "error",
@@ -62,6 +77,9 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 	tCode := utils.GenerateTenDigitCode()
 
 	if err != nil {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(400, gin.H{
 			"code":    400,
 			"status":  "error",
@@ -92,6 +110,7 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 		Amount:    req.Amount,
 		Status:    tStatus,
 		Type:      "collection",
+		Date:      time.Now(),
 	}
 
 	tx := config.DB.Begin()
@@ -100,6 +119,8 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 
 	if result.Error != nil {
 		tx.Rollback()
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
 
 		c.JSON(422, gin.H{
 			"code":    422,
@@ -115,6 +136,9 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 	tx.Commit()
 
 	if network == "mtn" || network == "airtel" {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "success", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(202, gin.H{
 			"code":    202,
 			"status":  "pending",
@@ -128,6 +152,9 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 	}
 
 	if network == "zamtel" {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "success", strconv.FormatInt(elapsed, 10))
+
 		c.JSON(200, gin.H{
 			"code":    200,
 			"status":  "success",
