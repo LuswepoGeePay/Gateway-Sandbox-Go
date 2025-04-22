@@ -1,6 +1,7 @@
 package dashboardservices
 
 import (
+	"log/slog"
 	"pg_sandbox/config"
 	"pg_sandbox/models"
 	"pg_sandbox/proto/dashboard"
@@ -54,4 +55,83 @@ func GetUsers(req *dashboard.GetUsersRequest) (*dashboard.GetUsersResponse, erro
 		CurrentPage: req.Page,
 		HasMore:     req.Page < totalPages,
 	}, nil
+}
+
+func GetUserStatistics() (*dashboard.UserStatisticsResponse, error) {
+	var totalMerchants int64
+	var totalUsers int64
+	var totalActiveUsers int64
+	var totalInActiveUsers int64
+	var totalAdmins int64
+	//users
+	usersQuery := config.DB.Model(&models.User{})
+
+	err := usersQuery.Count(&totalUsers).Error
+	if err != nil {
+		utils.Log(slog.LevelError, "Error", err.Error())
+		return nil, utils.CapitalizeError("failed to count users")
+	}
+
+	//active
+	activeQuery := config.DB.Model(&models.User{})
+	activeQuery = activeQuery.Where("status = ?", "active")
+
+	err = activeQuery.Count(&totalActiveUsers).Error
+	if err != nil {
+		utils.Log(slog.LevelError, "Error", err.Error())
+		return nil, utils.CapitalizeError("failed to count users")
+	}
+
+	//inactive
+	inactiveQuery := config.DB.Model(&models.User{})
+	inactiveQuery = inactiveQuery.Where("status = ?", "inactive")
+
+	err = inactiveQuery.Count(&totalInActiveUsers).Error
+	if err != nil {
+		utils.Log(slog.LevelError, "Error", err.Error())
+		return nil, utils.CapitalizeError("failed to count users")
+	}
+
+	//MERCHANTs
+
+	var role models.Role
+	result := config.DB.Where("name = ?", "merchant").First(&role)
+	if result.Error != nil {
+		return nil, utils.CapitalizeError("unable to find role merchant.")
+	}
+
+	merchantQuery := config.DB.Model(&models.User{})
+	merchantQuery = merchantQuery.Where("role_id = ?", role.ID)
+
+	err = merchantQuery.Count(&totalMerchants).Error
+	if err != nil {
+		utils.Log(slog.LevelError, "Error", err.Error())
+		return nil, utils.CapitalizeError("failed to count users")
+	}
+
+	//Admin
+
+	var adminRole models.Role
+	result = config.DB.Where("name = ?", "admin").First(&adminRole)
+	if result.Error != nil {
+		return nil, utils.CapitalizeError("unable to find role admin.")
+	}
+
+	adminQuery := config.DB.Model(&models.User{})
+	adminQuery = adminQuery.Where("role_id = ?", adminRole.ID)
+
+	err = adminQuery.Count(&totalAdmins).Error
+	if err != nil {
+		utils.Log(slog.LevelError, "Error", err.Error())
+		return nil, utils.CapitalizeError("failed to count users")
+	}
+
+	return &dashboard.UserStatisticsResponse{
+		AdminUsers:    int32(totalAdmins),
+		ActiveUsers:   int32(totalActiveUsers),
+		InactiveUsers: int32(totalInActiveUsers),
+		MerchantUsers: int32(totalMerchants),
+		Users:         int32(totalUsers),
+	}, nil
+
 }

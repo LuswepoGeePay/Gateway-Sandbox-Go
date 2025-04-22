@@ -27,12 +27,13 @@ message UserRoleStatisticsResponse {
 }
 
 
-
 message MerchantStatisticsResponse {
     int32 merchants= 1;
     int32 active_merchants = 2;
     int32 inactive_merchants = 3;
     int32 newToday = 4;
+    int32 newMonth = 5;
+    int32 newWeek =6;
 }
 
 
@@ -125,6 +126,16 @@ message API {
 }
 
 
+message Activity {
+    string user_id = 1;
+    string action = 2;
+    string entity = 3;
+    string entity_id = 4;
+    string ipaddress = 5;
+    string id =6;
+}
+
+
 
 message GetTransactionsRequest {
     int32 page =1;
@@ -163,6 +174,20 @@ message GetAPIrequests {
 
 message GetAPIReqsResponse {
     repeated API request = 1;       // List of users
+    int32 totalPages = 2;         // Total number of pages
+    int32 currentPage = 3;        // Current page
+    bool hasMore = 4;             // Whether there are more pages
+  }
+
+
+  message GetActivityrequests {
+    int32 page =1;
+    int32 pageSize =2;
+  
+}
+
+message GetActivityResponse {
+    repeated Activity activity = 1;       // List of users
     int32 totalPages = 2;         // Total number of pages
     int32 currentPage = 3;        // Current page
     bool hasMore = 4;             // Whether there are more pages

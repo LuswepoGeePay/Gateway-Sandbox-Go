@@ -1,11 +1,62 @@
 package dashboardservices
 
 import (
+	"log/slog"
 	"pg_sandbox/config"
 	"pg_sandbox/models"
 	"pg_sandbox/proto/dashboard"
 	"pg_sandbox/utils"
+	"time"
 )
+
+func GetApiStatistics() (*dashboard.APIStatisticsResponse, error) {
+
+	var totalRequests int64
+
+	var totalRequestsToday int64
+
+	var errorRate int64
+	now := time.Now()
+	//users
+	requestsQuery := config.DB.Model(&models.APILogs{})
+
+	err := requestsQuery.Count(&totalRequests).Error
+	if err != nil {
+		utils.Log(slog.LevelError, "Error", err.Error())
+		return nil, utils.CapitalizeError("failed to count requests")
+	}
+
+	//active
+	errorQuery := config.DB.Model(&models.APILogs{})
+	errorQuery = errorQuery.Where("status = ?", "failed")
+
+	err = errorQuery.Count(&errorRate).Error
+	if err != nil {
+		utils.Log(slog.LevelError, "Error", err.Error())
+		return nil, utils.CapitalizeError("failed to count errors")
+	}
+
+	location, _ := time.LoadLocation("Africa/Lusaka") // adjust based on deployment
+
+	// Start of Today at 01:00 AM
+	startOfToday := time.Date(now.Year(), now.Month(), now.Day(), 1, 0, 0, 0, location)
+	endOfToday := startOfToday.AddDate(0, 0, 1)
+
+	// Query
+	newTodayQuery := config.DB.Model(&models.APILogs{}).
+		Where("created_at >= ? AND created_at < ?", startOfToday, endOfToday)
+
+	err = newTodayQuery.Count(&totalRequestsToday).Error
+	if err != nil {
+		utils.Log(slog.LevelError, "Error", err.Error())
+		return nil, utils.CapitalizeError("failed to count requests for today")
+	}
+	return &dashboard.APIStatisticsResponse{
+		RequestsToday: int32(totalRequestsToday),
+		Requests:      int32(totalRequests),
+		ErrorRate:     int32(errorRate),
+	}, nil
+}
 
 func GetAPIRequests(req *dashboard.GetAPIrequests) (*dashboard.GetAPIReqsResponse, error) {
 	var apiLogs []models.APILogs
