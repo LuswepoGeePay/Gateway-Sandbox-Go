@@ -111,6 +111,7 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 		Status:    tStatus,
 		Type:      "collection",
 		Date:      time.Now(),
+		UserID:    existingClientID.UserID,
 	}
 
 	tx := config.DB.Begin()

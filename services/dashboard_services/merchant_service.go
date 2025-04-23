@@ -7,6 +7,8 @@ import (
 	"pg_sandbox/proto/dashboard"
 	"pg_sandbox/utils"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func GetMerchants(req *dashboard.GetUsersRequest) (*dashboard.GetUsersResponse, error) {
@@ -173,4 +175,57 @@ func GetMerchantStatistics() (*dashboard.MerchantStatisticsResponse, error) {
 		NewWeek:           int32(newThisWeek),
 	}, nil
 
+}
+
+func GetTopMerchants() (*dashboard.TopMerchantsResponse, error) {
+
+	type MerchantInfo struct {
+		MerchantID uuid.UUID
+		Fullname   string
+		Count      int
+	}
+
+	var merchantRole models.Role
+	err := config.DB.Where("name = ?", "merchant").First(&merchantRole).Error
+	if err != nil {
+		// handle error, e.g., role not found
+		return nil, utils.CapitalizeError("unable to fetch roles")
+	}
+
+	var topMerchants []MerchantInfo
+
+	if err := config.DB.Table("transactions").
+		Select("users.id as merchant_id, users.fullname, COUNT(transactions.id) as count").
+		Joins("LEFT JOIN users ON users.id = transactions.user_id").
+		Joins("LEFT JOIN roles ON roles.id = users.role_id").
+		Where("users.role_id = ?", merchantRole.ID). // Replace with actual merchant role UUID or dynamic role ID fetch
+		Group("users.id, users.fullname").
+		Order("count DESC").
+		Limit(3).
+		Scan(&topMerchants).Error; err != nil {
+		return nil, utils.CapitalizeError("unable to fetch top merchants")
+	}
+
+	resp := &dashboard.TopMerchantsResponse{}
+	if len(topMerchants) > 0 {
+		resp.MerchantOne = topMerchants[0].Fullname
+		resp.MerchantOneCount = int32(topMerchants[0].Count)
+	}
+	if len(topMerchants) > 1 {
+		resp.MerchantTwo = topMerchants[1].Fullname
+		resp.MerchantTwoCount = int32(topMerchants[1].Count)
+	}
+	if len(topMerchants) > 2 {
+		resp.MerchantThree = topMerchants[2].Fullname
+		resp.MerchantThreeCount = int32(topMerchants[2].Count)
+	}
+
+	return &dashboard.TopMerchantsResponse{
+		MerchantOne:        resp.MerchantOne,
+		MerchantTwo:        resp.MerchantTwo,
+		MerchantThree:      resp.MerchantThree,
+		MerchantOneCount:   resp.MerchantOneCount,
+		MerchantTwoCount:   resp.MerchantTwoCount,
+		MerchantThreeCount: resp.MerchantThreeCount,
+	}, nil
 }

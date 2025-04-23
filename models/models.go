@@ -57,6 +57,8 @@ type Role struct {
 
 type Transactions struct {
 	ID        uuid.UUID `gorm:"type:uuid;primary_key"`
+	UserID    uuid.UUID `gorm:"type:uuid;not null"`
+	User      User      `gorm:"foreignKey:UserID"`
 	Reference string    `gorm:"not null"`
 	Amount    string    `gorm:"not null"`
 	Status    string    `gorm:"not null"`

@@ -17,7 +17,7 @@ func RegisterHandler(c *gin.Context) {
 		return
 	}
 
-	userId, err := authservices.RegisterUser(&req)
+	userId, err := authservices.RegisterUser(c, &req)
 
 	if err != nil {
 		utils.RespondWithError(c, 400, utils.FailedToCreate("account"), err.Error())

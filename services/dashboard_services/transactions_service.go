@@ -8,6 +8,7 @@ import (
 	"pg_sandbox/proto/dashboard"
 	"pg_sandbox/utils"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -33,7 +34,7 @@ func GetTransactionStatistics() (*dashboard.TransactionStatisticsResponse, error
 
 	//successful
 	successQuery := config.DB.Model(&models.Transactions{})
-	successQuery = successQuery.Where("status = ? OR status = ?", "success", "completed")
+	successQuery = successQuery.Where("status = ? OR status = ?", "successful", "completed")
 
 	err = successQuery.Count(&totalSuccessful).Error
 	if err != nil {
@@ -145,4 +146,36 @@ func GetTransactions(req *dashboard.GetTransactionsRequest) (*dashboard.GetTrans
 		CurrentPage: req.Page,
 		HasMore:     req.Page < totalPages,
 	}, nil
+}
+
+func GetTransactionChannelStats() (*dashboard.TransactionChannelsResponse, error) {
+	type ChannelStat struct {
+		Channel string
+		Count   int64
+	}
+
+	var results []ChannelStat
+	err := config.DB.
+		Model(&models.Transactions{}).
+		Select("channel, COUNT(*) as count").
+		Group("channel").
+		Scan(&results).Error
+
+	if err != nil {
+		utils.Log(slog.LevelError, "Error", err.Error())
+		return nil, utils.CapitalizeError("failed to fetch transaction channel stats")
+	}
+
+	resp := &dashboard.TransactionChannelsResponse{}
+	for _, stat := range results {
+		switch strings.ToLower(stat.Channel) {
+		case "mtn":
+			resp.Mtn = int32(stat.Count)
+		case "zamtel":
+			resp.Zamtel = int32(stat.Count)
+		case "airtel":
+			resp.Airtel = int32(stat.Count)
+		}
+	}
+	return resp, nil
 }

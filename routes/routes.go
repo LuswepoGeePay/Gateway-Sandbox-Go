@@ -63,6 +63,7 @@ func SetupRoutes(r *gin.Engine) {
 
 	//dashboard
 	au.GET("/overview/cards", dashboard.GetOverviewCardsInfoHandler)
+	au.POST("/overview/activity", dashboard.GetActivitiesHandler)
 
 	//dashboard-users-tab
 	au.GET("/dashboard/users/info", dashboard.GetUserStatisticsHandler)
@@ -71,13 +72,16 @@ func SetupRoutes(r *gin.Engine) {
 	//dashboard-merchants-tab
 	au.GET("/dashboard/merchants/info", dashboard.GetMerchantStatisticsHandler)
 	au.POST("/dashboard/merchants", dashboard.GetMerchantsHandler)
+	au.GET("/dashboard/merchants/top", dashboard.GetTopMerchantsHandler)
 
 	//dashboard-requests-tab
 	au.GET("/dashboard/requests/info", dashboard.GetAPIRequestsInfoHandler)
 	au.POST("/dashboard/requests", dashboard.GetAPIRequestsHandler)
+	au.GET("/dashboard/request/response", dashboard.GetAPIResponeTimeHandler)
 
 	//dashboard-transactions-tab
 	au.GET("/dashboard/transactions/info", dashboard.GetTransactionInfoHandler)
 	au.POST("/dashboard/transactions", dashboard.GetTransactionsHandler)
+	au.GET("/dashboard/transactions/channels", dashboard.GetTransactionsChannelHandler)
 
 }

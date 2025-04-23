@@ -51,3 +51,18 @@ func GetTransactionsHandler(c *gin.Context) {
 		"transactions": transactions,
 	})
 }
+
+func GetTransactionsChannelHandler(c *gin.Context) {
+
+	response, err := dashboardservices.GetTransactionChannelStats()
+
+	if err != nil {
+		utils.RespondWithError(c, 400, utils.FailedToRetrieve("Transaction Channel Statistics Card Information"), err.Error())
+		return
+	}
+
+	utils.RespondWithSuccess(c, utils.SuccessfullyRetrieve("Transaction Channel Statistics Card Info"), gin.H{
+		"info": response,
+	})
+
+}

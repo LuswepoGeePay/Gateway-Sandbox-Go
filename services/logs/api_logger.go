@@ -39,7 +39,7 @@ func LogApiCall(c *gin.Context, userID string, endpoint string, method string, s
 
 }
 
-func LogActivity(c *gin.Context, userID string, action string, entityType string, entityID string, requestBody string, responseCode int, status string, errorMsg string, responseTimeMs string) error {
+func LogActivity(c *gin.Context, userID string, action string, entityType string, entityID string) error {
 
 	userId, err := uuid.Parse(userID)
 

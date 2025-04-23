@@ -1,6 +1,7 @@
 package dashboardservices
 
 import (
+	"fmt"
 	"log/slog"
 	"pg_sandbox/config"
 	"pg_sandbox/models"
@@ -11,6 +12,24 @@ import (
 
 func GetApiStatistics() (*dashboard.APIStatisticsResponse, error) {
 
+	type EndpointStat struct {
+		Endpoint string
+		Count    int64
+	}
+
+	var endpointStats []EndpointStat
+	err := config.DB.
+		Model(&models.APILogs{}).
+		Select("endpoint, COUNT(*) as count").
+		Group("endpoint").
+		Order("count DESC").
+		Limit(3).
+		Scan(&endpointStats).Error
+
+	if err != nil {
+		utils.Log(slog.LevelError, "Error", err.Error())
+		return nil, utils.CapitalizeError("failed to fetch endpoint stats")
+	}
 	var totalRequests int64
 
 	var totalRequestsToday int64
@@ -20,7 +39,7 @@ func GetApiStatistics() (*dashboard.APIStatisticsResponse, error) {
 	//users
 	requestsQuery := config.DB.Model(&models.APILogs{})
 
-	err := requestsQuery.Count(&totalRequests).Error
+	err = requestsQuery.Count(&totalRequests).Error
 	if err != nil {
 		utils.Log(slog.LevelError, "Error", err.Error())
 		return nil, utils.CapitalizeError("failed to count requests")
@@ -51,10 +70,35 @@ func GetApiStatistics() (*dashboard.APIStatisticsResponse, error) {
 		utils.Log(slog.LevelError, "Error", err.Error())
 		return nil, utils.CapitalizeError("failed to count requests for today")
 	}
-	return &dashboard.APIStatisticsResponse{
+
+	resp := &dashboard.APIStatisticsResponse{
 		RequestsToday: int32(totalRequestsToday),
 		Requests:      int32(totalRequests),
 		ErrorRate:     int32(errorRate),
+	}
+
+	if len(endpointStats) > 0 {
+		resp.Endpoint1 = endpointStats[0].Endpoint
+		resp.Endpoint1Count = fmt.Sprintf("%d", endpointStats[0].Count)
+	}
+	if len(endpointStats) > 1 {
+		resp.Endpoint2 = endpointStats[1].Endpoint
+		resp.Endpoint2Count = fmt.Sprintf("%d", endpointStats[1].Count)
+	}
+	if len(endpointStats) > 2 {
+		resp.Endpoint3 = endpointStats[2].Endpoint
+		resp.Endpoint3Count = fmt.Sprintf("%d", endpointStats[2].Count)
+	}
+	return &dashboard.APIStatisticsResponse{
+		RequestsToday:  resp.RequestsToday,
+		Requests:       resp.Requests,
+		ErrorRate:      resp.ErrorRate,
+		Endpoint1:      resp.Endpoint1,
+		Endpoint2:      resp.Endpoint2,
+		Endpoint3:      resp.Endpoint3,
+		Endpoint1Count: resp.Endpoint1Count,
+		Endpoint2Count: resp.Endpoint2Count,
+		Endpoint3Count: resp.Endpoint3Count,
 	}, nil
 }
 
@@ -84,7 +128,7 @@ func GetAPIRequests(req *dashboard.GetAPIrequests) (*dashboard.GetAPIReqsRespons
 	//calcualate offset
 	offset := (req.Page - 1) * req.PageSize
 
-	err = query.Order("api_logs.created_at DESC").Limit(int(req.PageSize)).
+	err = query.Preload("User").Order("api_logs.created_at DESC").Limit(int(req.PageSize)).
 		Offset(int(offset)).Find(&apiLogs).Error
 
 	if err != nil {
@@ -96,7 +140,7 @@ func GetAPIRequests(req *dashboard.GetAPIrequests) (*dashboard.GetAPIReqsRespons
 	for i, log := range apiLogs {
 		pbapiLogs[i] = &dashboard.API{
 			Id:           log.ID.String(),
-			UserId:       log.UserID.String(),
+			UserId:       log.User.Fullname,
 			Status:       log.Status,
 			Endpoint:     log.Endpoint,
 			Method:       log.Method,
@@ -110,4 +154,40 @@ func GetAPIRequests(req *dashboard.GetAPIrequests) (*dashboard.GetAPIReqsRespons
 		CurrentPage: req.Page,
 		HasMore:     req.Page < totalPages,
 	}, nil
+}
+
+func GetAPIResponseTimeStats() (*dashboard.APIResTimeStatisticsResponse, error) {
+	type ResponseStat struct {
+		Endpoint    string
+		AverageTime float64
+	}
+
+	var stats []ResponseStat
+	err := config.DB.
+		Model(&models.APILogs{}).
+		Select("endpoint, AVG(response_time) as average_time").
+		Group("endpoint").
+		Order("average_time DESC").
+		Limit(3).
+		Scan(&stats).Error
+
+	if err != nil {
+		utils.Log(slog.LevelError, "Error", err.Error())
+		return nil, utils.CapitalizeError("failed to fetch API response times")
+	}
+
+	resp := &dashboard.APIResTimeStatisticsResponse{}
+	if len(stats) > 0 {
+		resp.Endpoint1 = stats[0].Endpoint
+		resp.Endpoint1Time = fmt.Sprintf("%.2f ms", stats[0].AverageTime)
+	}
+	if len(stats) > 1 {
+		resp.Endpoint2 = stats[1].Endpoint
+		resp.Endpoint2Time = fmt.Sprintf("%.2f ms", stats[1].AverageTime)
+	}
+	if len(stats) > 2 {
+		resp.Endpoint3 = stats[2].Endpoint
+		resp.Endpoint3Time = fmt.Sprintf("%.2f ms", stats[2].AverageTime)
+	}
+	return resp, nil
 }

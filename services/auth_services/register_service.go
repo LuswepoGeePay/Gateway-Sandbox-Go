@@ -6,11 +6,12 @@ import (
 	"pg_sandbox/proto/auth"
 	"pg_sandbox/utils"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func RegisterUser(req *auth.RegisterRequest) (*string, error) {
+func RegisterUser(c *gin.Context, req *auth.RegisterRequest) (*string, error) {
 
 	tx := config.DB.Begin()
 
@@ -42,6 +43,8 @@ func RegisterUser(req *auth.RegisterRequest) (*string, error) {
 		tx.Rollback()
 		return nil, utils.CapitalizeError(result.Error.Error())
 	}
+
+	// logs.LogActivity(c, userId.String(), "Registration", "Auth", userId.String())
 
 	clientID := uuid.New().String()
 	clientSecret := uuid.New().String() // You can use a more secure approach to generate the secret

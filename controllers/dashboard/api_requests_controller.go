@@ -51,3 +51,18 @@ func GetAPIRequestsHandler(c *gin.Context) {
 		"requests": requests,
 	})
 }
+
+func GetAPIResponeTimeHandler(c *gin.Context) {
+
+	response, err := dashboardservices.GetAPIResponseTimeStats()
+
+	if err != nil {
+		utils.RespondWithError(c, 400, utils.FailedToRetrieve("API Time Statistics Card Information"), err.Error())
+		return
+	}
+
+	utils.RespondWithSuccess(c, utils.SuccessfullyRetrieve("API Time Statistics Card Info"), gin.H{
+		"info": response,
+	})
+
+}

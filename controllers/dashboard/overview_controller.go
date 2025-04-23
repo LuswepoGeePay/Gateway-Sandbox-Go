@@ -79,3 +79,17 @@ func GetMerchantsHandler(c *gin.Context) {
 	})
 
 }
+
+func GetTopMerchantsHandler(c *gin.Context) {
+	response, err := dashboardservices.GetTopMerchants()
+
+	if err != nil {
+		utils.RespondWithError(c, 400, utils.FailedToRetrieve("Top Merchant Information"), err.Error())
+		return
+	}
+
+	utils.RespondWithSuccess(c, utils.SuccessfullyRetrieve("Top Merchant Info"), gin.H{
+		"info": response,
+	})
+
+}

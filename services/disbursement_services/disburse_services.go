@@ -210,6 +210,7 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 		Narration: req.Narration,
 		Type:      "disbursement",
 		Date:      time.Now(),
+		UserID:    existingClient.UserID,
 	}
 
 	result = tx.Create(&transaction)
