@@ -34,7 +34,7 @@ func SendCodeMail(req *mail.SendMailRequest) error {
 	}
 
 	m := gomail.NewMessage()
-	m.SetHeader("From", "noreply@mygeepay.com")
+	m.SetHeader("From", "gpgsnoreply@gmail.com")
 	m.SetHeader("To", req.To)
 	m.SetHeader("Subject", req.Subject)
 	m.SetBody("text/html", body.String())
@@ -45,13 +45,13 @@ func SendCodeMail(req *mail.SendMailRequest) error {
 	// 	"luswepo17@gmail.com",
 	// 	"dqiemeknokcbuexh")
 	d := gomail.NewDialer(
-		"mail.mygeepay.com",    // MAIL_HOST
-		465,                    // MAIL_PORT
-		"noreply@mygeepay.com", // MAIL_USERNAME
-		"3qy7TtF!Ob^?",         // MAIL_PASSWORD
+		"smtp.gmail.com",        // MAIL_HOST
+		465,                     // MAIL_PORT
+		"gpgsnoreply@gmail.com", // MAIL_USERNAME
+		"pbeb pnvy kdkt ykze",   // MAIL_PASSWORD
 	)
 	d.SSL = true
-	d.TLSConfig = &tls.Config{ServerName: "mail.mygeepay.com"}
+	d.TLSConfig = &tls.Config{ServerName: "smtp.gmail.com"}
 
 	// Add timeout
 	_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
