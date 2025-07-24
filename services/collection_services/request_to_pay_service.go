@@ -141,7 +141,7 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "success", strconv.FormatInt(elapsed, 10))
 
 		c.JSON(202, gin.H{
-			"code":    202,
+			"code":    200,
 			"status":  "pending",
 			"message": "Request sent. Awaiting customer action.",
 			"data": gin.H{

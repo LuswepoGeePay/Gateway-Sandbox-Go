@@ -33,23 +33,23 @@ func TransactionQuery(c *gin.Context, transationRef string) {
 
 		c.JSON(404, gin.H{
 			"code":    404,
-			"status":  "failed",
+			"status":  "error",
 			"message": "Transaction Not Found",
-			"error":   gin.H{"Transaction Reference": []string{"Transaction Reference is invalid"}},
 		})
 		return
 	}
 
+	tCode := utils.GenerateTenDigitCode()
+
 	c.JSON(200, gin.H{
 		"code":    200,
 		"status":  "success",
-		"message": "Transaction Status Retrieved",
+		"message": "Transaction Status Fetched successfully",
 		"data": gin.H{
-			"status":   transaction.Status,
-			"amount":   transaction.Amount,
-			"customer": transaction.Customer,
-			"channel":  transaction.Channel,
-			"date":     transaction.Date,
+			"status":                "successful",
+			"message":               "Transaction was processed successfully",
+			"transaction_reference": transaction.Reference,
+			"external_reference":    tCode,
 		},
 	})
 

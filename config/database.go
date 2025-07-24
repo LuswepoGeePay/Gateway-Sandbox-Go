@@ -15,8 +15,8 @@ var DB *gorm.DB
 func InitDB() {
 	var err error
 
-	dsn := "root@tcp(127.0.0.1:3306)/pgsandbox?charset=utf8mb4&parseTime=True&loc=Local"
-	//dsn := "root:password@tcp(127.0.0.1:3306)/pgsandbox?charset=utf8mb4&parseTime=True&loc=Local"
+	// dsn := "root@tcp(127.0.0.1:3306)/pgsandbox?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "sandbox_user:sandbox_password@tcp(10.139.40.25:3306)/pgsandbox?charset=utf8mb4&parseTime=True&loc=Local"
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect to the database: %v", err)

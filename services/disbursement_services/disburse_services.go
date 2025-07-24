@@ -174,7 +174,7 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 		c.JSON(400, gin.H{
 			"code":    400,
 			"status":  "error",
-			"message": "Insufficient disbursement balance for transaction, please request for more float",
+			"message": "Insufficient disbursement balance, please top up",
 		})
 		return
 	}
@@ -252,8 +252,8 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 			"status":  "successful",
 			"message": "Disbursement was processed successfully",
 			"data": gin.H{
-				"transaction_id": xTref,
-				"external_id":    tCode,
+				"transaction_id":     xTref,
+				"external_reference": tCode,
 			},
 		})
 		return
