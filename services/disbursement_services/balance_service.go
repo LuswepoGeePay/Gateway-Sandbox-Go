@@ -64,7 +64,7 @@ func CheckDisbursementBalance(c *gin.Context, xClientID string, xAuthSignature s
 		c.JSON(404, gin.H{
 			"code":    404,
 			"status":  "failed",
-			"message": "User not",
+			"message": "User not found.",
 			"error":   gin.H{"System error": []string{"Transaction Reference is invalid"}},
 		})
 		return

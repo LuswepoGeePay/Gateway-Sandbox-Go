@@ -1,9 +1,11 @@
 package authservices
 
 import (
+	"log/slog"
 	"pg_sandbox/utils"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -14,10 +16,14 @@ func ValidateToken(tokenString string) (*jwt.RegisteredClaims, error) {
 		return jwtSecret, nil
 	})
 	if err != nil {
+		utils.Log(slog.LevelError, "❌Error", "unable to validate token", "data", gin.H{
+			"error": err,
+		})
 		return nil, utils.CapitalizeError("invalid token")
 	}
 	claims, ok := token.Claims.(*jwt.RegisteredClaims)
 	if !ok || !token.Valid {
+		utils.Log(slog.LevelError, "❌Error", "invalid token claims, unable to generate token")
 		return nil, utils.CapitalizeError("invalid token claims")
 	}
 	return claims, nil

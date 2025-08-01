@@ -9,6 +9,8 @@ import (
 	"pg_sandbox/models"
 	"pg_sandbox/proto/api"
 	"pg_sandbox/utils"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GenerateSecret(req *api.RegenerateRequest) (*string, error) {
@@ -28,7 +30,7 @@ func GenerateSecret(req *api.RegenerateRequest) (*string, error) {
 
 	err = tx.Where("id = ?", req.UserId).Find(&user).Error
 	if err != nil {
-		utils.Log(slog.LevelError, "Unable to find user", "Error", err.Error)
+		utils.Log(slog.LevelError, "Unable to generate client secret, unable find user", "Error", err.Error)
 		return nil, utils.CapitalizeError("cannot find user")
 	}
 
@@ -36,7 +38,10 @@ func GenerateSecret(req *api.RegenerateRequest) (*string, error) {
 
 	if result.Error != nil {
 		tx.Rollback()
-		utils.Log(slog.LevelError, "Unable to add secret to db", "Error", result.Error)
+		utils.Log(slog.LevelError, "❌Error", "unable to add client secret to ", "data", gin.H{
+			"error":        result.Error,
+			"request_body": req,
+		})
 		return nil, utils.CapitalizeError("Error adding signature to profile")
 	}
 

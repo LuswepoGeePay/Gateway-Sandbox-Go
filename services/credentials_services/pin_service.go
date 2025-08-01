@@ -6,6 +6,8 @@ import (
 	"pg_sandbox/models"
 	"pg_sandbox/proto/api"
 	"pg_sandbox/utils"
+
+	"github.com/gin-gonic/gin"
 )
 
 func SetPin(req *api.SetPinRequest) error {
@@ -27,7 +29,9 @@ func SetPin(req *api.SetPinRequest) error {
 
 	if result.Error != nil {
 		tx.Rollback()
-		utils.Log(slog.LevelError, "Error adding to db", "Error", result.Error)
+		utils.Log(slog.LevelError, "❌Error", "unable to set pin merchant fee profile", "data", gin.H{
+			"request_body": req,
+		})
 		return utils.CapitalizeError("unable to set new pin on merchant profile")
 	}
 

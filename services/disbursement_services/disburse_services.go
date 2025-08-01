@@ -103,7 +103,7 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 		return
 	}
 
-	if req.Amount == "" {
+	if req.Amount == 0 {
 		elapsed := time.Since(start).Milliseconds()
 		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
 
@@ -119,26 +119,7 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 
 	}
 
-	amountConverted, err := strconv.ParseFloat(req.Amount, 64)
-	tCode := utils.GenerateTenDigitCode()
-
-	if err != nil {
-
-		elapsed := time.Since(start).Milliseconds()
-		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
-
-		c.JSON(400, gin.H{
-			"code":    400,
-			"status":  "error",
-			"message": "Validation failed.",
-			"errors": gin.H{
-				"amount": []string{"Invalid amount format."},
-			},
-		})
-		return
-	}
-
-	if amountConverted <= 0 {
+	if req.Amount <= 0 {
 		elapsed := time.Since(start).Milliseconds()
 		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
 
@@ -167,7 +148,7 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 
 	}
 
-	if amountConverted > floatBalancedConverted {
+	if float64(req.Amount) > floatBalancedConverted {
 		elapsed := time.Since(start).Milliseconds()
 		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "failed", strconv.FormatInt(elapsed, 10))
 
@@ -181,7 +162,7 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 
 	tx := config.DB.Begin()
 
-	newDisbursementBalance := floatBalancedConverted - amountConverted
+	newDisbursementBalance := floatBalancedConverted - float64(req.Amount)
 
 	result = tx.Model(&models.ApiKeys{}).Where("user_id = ?", existingClient.UserID).Update("float_balance", strconv.FormatFloat(newDisbursementBalance, 'f', -1, 64))
 
@@ -200,13 +181,21 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 		return
 	}
 
+	tStatus := ""
+
+	// if req.IsFailed {
+	// 	tStatus = "failed"
+	// }
+
+	tStatus = "successful"
+
 	transaction := models.Transactions{
 		ID:        uuid.New(),
 		Reference: xTref,
 		Channel:   network,
 		Customer:  req.PhoneNumber,
-		Amount:    req.Amount,
-		Status:    "completed",
+		Amount:    string(req.Amount),
+		Status:    tStatus,
 		Narration: req.Narration,
 		Type:      "disbursement",
 		Date:      time.Now(),
@@ -231,15 +220,35 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 		return
 	}
 
+	tCode := utils.GenerateTenDigitCode()
+
 	if xCallbackUrl != "" {
 		CallbackHandler(xCallbackUrl, models.CallbackPayload{
-			Code:          200,
-			Status:        "successful",
-			Message:       "The funds have been disbursed.",
-			TransactionID: xTref,
-			ExternalID:    tCode,
+			Code:    200,
+			Status:  "successful",
+			Message: "Disbursement has been successfully processed and settled.",
+			Data: models.CallbackPayloadData{
+				TransactionReference: xTref,
+				ExternalReference:    tCode,
+				Customer:             req.PhoneNumber,
+				Amount:               string(req.Amount),
+			},
 		})
 	}
+
+	// if xCallbackUrl != "" && req.IsFailed {
+	// 	CallbackHandler(xCallbackUrl, models.CallbackPayload{
+	// 		Code:    402,
+	// 		Status:  "failed",
+	// 		Message: "Transaction failed. Please try again.",
+	// 		Data: models.CallbackPayloadData{
+	// 			TransactionReference: xTref,
+	// 			ExternalReference:    "",
+	// 			Customer:             req.PhoneNumber,
+	// 			Amount:               string(req.Amount),
+	// 		},
+	// 	})
+	// }
 
 	tx.Commit()
 
@@ -250,7 +259,7 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 		c.JSON(200, gin.H{
 			"code":    200,
 			"status":  "successful",
-			"message": "Disbursement was processed successfully",
+			"message": "Disbursement has been successfully processed and settled.",
 			"data": gin.H{
 				"transaction_id":     xTref,
 				"external_reference": tCode,
@@ -266,7 +275,7 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 		c.JSON(200, gin.H{
 			"code":    200,
 			"status":  "successful",
-			"message": "Disbursement was processed successfully",
+			"message": "Disbursement has been successfully processed and settled.",
 			"data": gin.H{
 				"transaction_id": xTref,
 				"external_id":    tCode,

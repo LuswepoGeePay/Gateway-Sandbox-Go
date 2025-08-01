@@ -1,6 +1,7 @@
 package logs
 
 import (
+	"encoding/json"
 	"log/slog"
 	"pg_sandbox/config"
 	"pg_sandbox/models"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gorm.io/datatypes"
 )
 
 func LogApiCall(c *gin.Context, userID string, endpoint string, method string, status string, responseTimeMs string) error {
@@ -65,4 +67,31 @@ func LogActivity(c *gin.Context, userID string, action string, entityType string
 
 	return nil
 
+}
+
+func AddAuditService(title string, metaData map[string]interface{}) {
+
+	metaJson, err := json.Marshal(metaData)
+
+	if err != nil {
+		utils.Log(slog.LevelError, "error", "unable to marshal metadata", "detail", err.Error())
+		return
+	}
+
+	Audit := models.AuditLogs{
+		ID:         uuid.New(),
+		AuditTitle: title,
+
+		AuditMetaData: datatypes.JSON(metaJson),
+	}
+
+	tx := config.DB.Begin()
+
+	if err := tx.Create(&Audit).Error; err != nil {
+		tx.Rollback()
+		utils.Log(slog.LevelError, "error", "unable to add audit information", "detail", err.Error())
+		return
+	}
+
+	tx.Commit()
 }

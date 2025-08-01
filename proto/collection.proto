@@ -8,7 +8,8 @@ option go_package = "/proto/collection;collection";
 
 message CollectionRequest {
     string phone_number = 1;
-    string amount = 2;
+    int32 amount = 2;
+    //bool isFailed = 10;
 
 }
 
@@ -21,5 +22,6 @@ message collectionResponse {
     string id = 6;
     repeated string permissions = 7; // List of permissions granted to the user
     string tokenExpiry =9;
+  
 
 }

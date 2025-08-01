@@ -1,6 +1,7 @@
 package authservices
 
 import (
+	"log/slog"
 	"pg_sandbox/config"
 	"pg_sandbox/models"
 	"pg_sandbox/proto/auth"
@@ -18,12 +19,23 @@ func RegisterUser(c *gin.Context, req *auth.RegisterRequest) (*string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 
 	if err != nil {
+		utils.Log(slog.LevelError, "❌Error", "unable to generate hash from password", "data", gin.H{
+			"email": req.Email,
+			"error": err,
+		})
 		return nil, utils.CapitalizeError("unable to hash password")
 	}
 
 	var role models.Role
 	result := tx.Where("name = ?", req.Role).First(&role)
 	if result.Error != nil {
+		utils.Log(slog.LevelError, "❌Error", "unable to find role", "data", gin.H{
+			"email":    req.Email,
+			"error":    err,
+			"role":     req.Role,
+			"phone":    req.Phone,
+			"fullname": req.Fullname,
+		})
 		return nil, utils.CapitalizeError("unable to find role.")
 	}
 
@@ -40,6 +52,13 @@ func RegisterUser(c *gin.Context, req *auth.RegisterRequest) (*string, error) {
 
 	result = tx.Create(&user)
 	if result.Error != nil {
+		utils.Log(slog.LevelError, "❌Error", "unable to create user", "data", gin.H{
+			"email":    req.Email,
+			"error":    err,
+			"role":     req.Role,
+			"phone":    req.Phone,
+			"fullname": req.Fullname,
+		})
 		tx.Rollback()
 		return nil, utils.CapitalizeError(result.Error.Error())
 	}
@@ -59,6 +78,11 @@ func RegisterUser(c *gin.Context, req *auth.RegisterRequest) (*string, error) {
 
 	if err := tx.Create(&apiKey).Error; err != nil {
 		tx.Rollback()
+		utils.Log(slog.LevelError, "❌Error", "unable to create api keys", "data", gin.H{
+			"email":         req.Email,
+			"client_id":     clientID,
+			"client_secret": clientSecret,
+		})
 		return nil, utils.CapitalizeError("unable to create API keys")
 	}
 

@@ -51,9 +51,15 @@ type GetRepliesRequest struct {
 }
 
 type CallbackPayload struct {
-	Code          int    `json:"code"`
-	Status        string `json:"status"`
-	Message       string `json:"message"`
-	TransactionID string `json:"transaction_id"`
-	ExternalID    string `json:"external_id"`
+	Code    int                 `json:"code"`
+	Status  string              `json:"status"`
+	Message string              `json:"message"`
+	Data    CallbackPayloadData `json:"data"`
+}
+
+type CallbackPayloadData struct {
+	TransactionReference string `json:"transaction_reference"`
+	ExternalReference    string `json:"external_reference"`
+	Customer             string `json:"customer"`
+	Amount               string `json:"amount"`
 }

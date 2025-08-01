@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -75,6 +76,7 @@ type CheckOutUrls struct {
 	OrderID       string    `gorm:"default:null"`
 	CustomerName  string    `gorm:"default:null"`
 	CustomerEmail string    `gorm:"default:null"`
+	ReturnUrl     string    `gorm:"default:null"`
 	SuccessUrl    string    `gorm:"default:null"`
 	FailedUrl     string    `gorm:"default:null"`
 	CancelUrl     string    `gorm:"default:null"`
@@ -104,5 +106,12 @@ type ActivityLogs struct {
 	Entity    string    `gorm:"default:null"`
 	EntityID  string    `gorm:"default:null"`
 	IPAddress string    `gorm:"default:null"`
+	gorm.Model
+}
+
+type AuditLogs struct {
+	ID            uuid.UUID      `gorm:"type:uuid;primary_key"`
+	AuditTitle    string         `gorm:"default:null"`
+	AuditMetaData datatypes.JSON `gorm:"type:json"`
 	gorm.Model
 }

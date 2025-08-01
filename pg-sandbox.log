@@ -5,3 +5,15 @@
 {"time":"2025-04-22T11:22:51.2599748+02:00","level":"ERROR","msg":"Failed to log API Call:","!BADKEY":"Error 1146 (42S02): Table 'pgsandbox.api_logs' doesn't exist"}
 {"time":"2025-04-23T12:29:01.7378158+02:00","level":"ERROR","msg":"Error: Failed to log Activity","!BADKEY":"Error 1205 (HY000): Lock wait timeout exceeded; try restarting transaction"}
 {"time":"2025-04-23T12:31:02.2204634+02:00","level":"ERROR","msg":"Error: Failed to log Activity","!BADKEY":"Error 1205 (HY000): Lock wait timeout exceeded; try restarting transaction"}
+{"time":"2025-07-31T11:07:36.8391955+02:00","level":"ERROR","msg":"Error","!BADKEY":"Client ID is invalid"}
+{"time":"2025-07-31T11:08:26.4833382+02:00","level":"ERROR","msg":"Error","!BADKEY":"Client ID is invalid"}
+{"time":"2025-07-31T11:09:04.9056349+02:00","level":"ERROR","msg":"Error","!BADKEY":"Client ID is invalid"}
+{"time":"2025-07-31T11:09:24.6170937+02:00","level":"ERROR","msg":"Error","!BADKEY":"Client ID is invalid"}
+{"time":"2025-07-31T13:30:55.0238756+02:00","level":"ERROR","msg":"wrong grant type","data":{"grant_type":"client_credentias"}}
+{"time":"2025-07-31T13:40:56.7303183+02:00","level":"ERROR","msg":"❌Error","Unable to Login":"detail","record not found":"data","!BADKEY":{"email":"luswepo@geepay.co.zm"}}
+{"time":"2025-07-31T13:40:56.7313805+02:00","level":"ERROR","msg":"❌Error","Unable to Login, user not found":"data","!BADKEY":{"email":"luswepo@geepay.co.zm"}}
+{"time":"2025-07-31T13:41:27.1957288+02:00","level":"ERROR","msg":"❌Error","User with role 'admin' cannot access the 'merchant' portal":"data","!BADKEY":{"email":"luswepo17@gmail.com"}}
+{"time":"2025-07-31T14:01:35.5761267+02:00","level":"ERROR","msg":"unable to find user","data":{"client_id":"de782a8c-b8f5-4222-8f7c-a76df1ad09ee","client_secret":"e6d1b2b8-c34a-47f7-a900-1417fea1cc94"}}
+{"time":"2025-07-31T14:03:49.5438192+02:00","level":"ERROR","msg":"Error","Invalid Request Body":"Client ID","!BADKEY":"13dccf44-58b9-446c-a76e-c70af8bff948"}
+{"time":"2025-07-31T14:04:05.7125892+02:00","level":"ERROR","msg":"Error","Invalid Request Body":"Client ID","!BADKEY":"13dccf44-58b9-446c-a76e-c70af8bff948"}
+{"time":"2025-07-31T14:05:04.6623093+02:00","level":"ERROR","msg":"❌Error","unable to initate request to pay, client ID is invalid":"data","!BADKEY":{"amount":20,"client_id":"13dccf44-58b9-446c-a76e-c70af8bff94","phone_number":"0978790212","request_body":{"phone_number":"0978790212","amount":20},"transaction_ref":"TestReg3456"}}

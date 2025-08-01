@@ -24,11 +24,7 @@ func GetCheckoutDetails(checkoutID string) (*hcheckout.HCheckout, error) {
 			Name:  checkout.CustomerName,
 			Email: checkout.CustomerEmail,
 		},
-		RedirectUrls: &hcheckout.RedirectUrls{
-			Failure: checkout.FailedUrl,
-			Cancel:  checkout.CancelUrl,
-			Success: checkout.SuccessUrl,
-		},
-		Amount: checkout.Amount,
+		ReturnUrl: checkout.ReturnUrl,
+		Amount:    checkout.Amount,
 	}, nil
 }

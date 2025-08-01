@@ -13,9 +13,11 @@ import (
 func SetFloatBalance(c *gin.Context, req *api.UpdateFloatReuest) error {
 
 	if req.UserId == "" {
+		utils.Log(slog.LevelError, "❌Error", "Unable to set float balance, user id is required")
 		return utils.CapitalizeError("user ID is required.")
 	}
 	if req.Float == "" {
+		utils.Log(slog.LevelError, "❌Error", "Unable to set float balance float amount is required")
 		return utils.CapitalizeError("float is required.")
 	}
 
@@ -27,7 +29,7 @@ func SetFloatBalance(c *gin.Context, req *api.UpdateFloatReuest) error {
 
 	if result.Error != nil {
 		tx.Rollback()
-		utils.Log(slog.LevelError, "Error adding to db", "Error", result.Error)
+		utils.Log(slog.LevelError, "❌Error", "Unable to update float balance")
 		return utils.CapitalizeError("unable to set new float balance on merchant profile")
 	}
 	tx.Commit()

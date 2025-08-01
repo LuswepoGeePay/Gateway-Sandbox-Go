@@ -2,9 +2,11 @@ package hostedcheckoutservices
 
 import (
 	"log/slog"
+	"net/url"
 	"pg_sandbox/config"
 	"pg_sandbox/models"
 	"pg_sandbox/proto/hcheckout"
+	disbursementservices "pg_sandbox/services/disbursement_services"
 	"pg_sandbox/services/logs"
 	"pg_sandbox/utils"
 	"strconv"
@@ -76,15 +78,45 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 
 	checkoutUrl := req.CheckoutBaseUrl + checkoutID.String()
 
+	returnUrl := ""
+
+	var returnUrlParsed *url.URL
+	var err error
+
+	if req.ReceiptRedirect {
+		returnUrlParsed, err = url.Parse(req.ReturnUrl)
+		if err != nil {
+			c.JSON(400, gin.H{
+				"code":    400,
+				"status":  "error",
+				"message": "Invalid return URL provided",
+			})
+			return
+		}
+
+		txCode := utils.GenerateTenDigitCode()
+		params := returnUrlParsed.Query()
+		params.Set("status", "successful")
+		params.Set("message", "Your transaction was completed successfully.") // customize if needed
+		params.Set("transaction_reference", xTref)
+		params.Set("external_reference", txCode)
+
+		returnUrlParsed.RawQuery = params.Encode()
+	}
+
+	if req.ReceiptRedirect {
+		returnUrl = returnUrlParsed.String()
+	} else {
+		returnUrl = req.ReturnUrl
+	}
+
 	generatedCheckoutUrl := models.CheckOutUrls{
 		ID:            checkoutID,
 		OrderID:       req.OrderId,
-		Amount:        req.Amount,
+		Amount:        strconv.FormatFloat(float64(req.Amount), 'f', -1, 64),
 		CustomerName:  req.Customer.Name,
 		CustomerEmail: req.Customer.Email,
-		CancelUrl:     req.RedirectUrls.Cancel,
-		SuccessUrl:    req.RedirectUrls.Success,
-		FailedUrl:     req.RedirectUrls.Failure,
+		ReturnUrl:     returnUrl,
 		GeneratedUrl:  checkoutUrl,
 		TReference:    xTref,
 	}
@@ -113,6 +145,20 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 		"message":      "Checkout session created",
 		"checkout_url": checkoutUrl,
 	})
+
+	if xCallbackUrl != "" {
+		disbursementservices.CallbackHandler(xCallbackUrl, models.CallbackPayload{
+			Code:    200,
+			Status:  "successful",
+			Message: "Transaction successful. Please try again.",
+			Data: models.CallbackPayloadData{
+				TransactionReference: xTref,
+				ExternalReference:    "",
+				Customer:             "",
+				Amount:               strconv.FormatFloat(float64(req.Amount), 'f', -1, 32),
+			},
+		})
+	}
 
 	elapsed := time.Since(start).Milliseconds()
 	logs.LogApiCall(c, existingClient.UserID.String(), "/v1/checkout/session", "POST", "success", strconv.FormatInt(elapsed, 10))

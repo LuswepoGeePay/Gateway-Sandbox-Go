@@ -17,6 +17,8 @@ func MakeCollectionHandler(c *gin.Context) {
 
 	commonservices.CheckEssentialHeaders(c)
 
+	xCallbackUrl := c.GetHeader("X-CALLBACK-URL")
+
 	if c.IsAborted() {
 		return
 	}
@@ -26,6 +28,7 @@ func MakeCollectionHandler(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 
 		utils.Log(slog.LevelError, "Error", "Invalid Request Body", "Client ID", xClientId)
+
 		c.JSON(400, gin.H{
 			"code":    400,
 			"status":  "error",
@@ -38,5 +41,5 @@ func MakeCollectionHandler(c *gin.Context) {
 		return
 	}
 
-	collectionservices.RequestToPay(c, xClientId, xTransactionRef, &req)
+	collectionservices.RequestToPay(c, xClientId, xTransactionRef, xCallbackUrl, &req)
 }

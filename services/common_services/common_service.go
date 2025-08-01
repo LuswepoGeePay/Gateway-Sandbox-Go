@@ -18,6 +18,7 @@ func CheckEssentialHeaders(c *gin.Context) {
 		c.JSON(400, gin.H{
 			"message": "unauthenticated",
 		})
+		c.Abort()
 		return
 	}
 
@@ -25,6 +26,7 @@ func CheckEssentialHeaders(c *gin.Context) {
 
 	err := tokenservices.ValidateOAuthToken(tokenString)
 	if err != nil {
+
 		utils.RespondWithError(c, 401, "Invalid Token")
 		c.Abort()
 		return

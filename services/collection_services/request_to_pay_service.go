@@ -5,6 +5,7 @@ import (
 	"pg_sandbox/config"
 	"pg_sandbox/models"
 	"pg_sandbox/proto/collection"
+	disbursementservices "pg_sandbox/services/disbursement_services"
 	"pg_sandbox/services/logs"
 	"pg_sandbox/utils"
 	"strconv"
@@ -15,7 +16,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req *collection.CollectionRequest) {
+func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, xCallbackUrl string, req *collection.CollectionRequest) {
 
 	start := time.Now()
 	// handle logic
@@ -26,7 +27,11 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 
 	if result.Error != nil {
 
-		utils.Log(slog.LevelError, "Error", "Client ID is invalid")
+		utils.Log(slog.LevelError, "❌Error", "unable to initate request to pay, client ID is invalid", "data", gin.H{
+			"client_id":       xClientId,
+			"transaction_ref": xTransactionRef,
+			"request_body":    req,
+		})
 		c.JSON(402, gin.H{
 			"code":    402,
 			"status":  "error",
@@ -41,6 +46,12 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 	if strings.TrimSpace(xTransactionRef) == "" {
 		elapsed := time.Since(start).Milliseconds()
 		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
+		utils.Log(slog.LevelError, "❌Error", "unable to initate request to pay, transaction reference is empty", "data", gin.H{
+			"client_id":       xClientId,
+			"transaction_ref": xTransactionRef,
+			"request_body":    req,
+		})
 
 		c.JSON(402, gin.H{
 			"code":    402,
@@ -61,6 +72,12 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 		elapsed := time.Since(start).Milliseconds()
 		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
 
+		utils.Log(slog.LevelError, "❌Error", "unable to initate request to pay, transaction reference has already been taken", "data", gin.H{
+			"client_id":       xClientId,
+			"transaction_ref": xTransactionRef,
+			"request_body":    req,
+		})
+
 		c.JSON(422, gin.H{
 			"code":    422,
 			"status":  "error",
@@ -79,7 +96,11 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 	if err != nil {
 		elapsed := time.Since(start).Milliseconds()
 		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
-
+		utils.Log(slog.LevelError, "❌Error", "unable to initate request to pay, inavlid phone number", "data", gin.H{
+			"client_id":       xClientId,
+			"transaction_ref": xTransactionRef,
+			"request_body":    req,
+		})
 		c.JSON(400, gin.H{
 			"code":    400,
 			"status":  "error",
@@ -94,12 +115,17 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 
 	tStatus := ""
 
+	// if req.IsFailed {
+
+	// 	tStatus = "failed"
+	// }
+
 	if network == "mtn" {
 		tStatus = "pending"
 	} else if network == "airtel" {
 		tStatus = "pending"
 	} else if network == "zamtel" {
-		tStatus = "sucessful"
+		tStatus = "successful"
 	}
 
 	transaction := models.Transactions{
@@ -107,7 +133,7 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 		Reference: xTransactionRef,
 		Channel:   network,
 		Customer:  req.PhoneNumber,
-		Amount:    req.Amount,
+		Amount:    string(req.Amount),
 		Status:    tStatus,
 		Type:      "collection",
 		Date:      time.Now(),
@@ -122,7 +148,12 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 		tx.Rollback()
 		elapsed := time.Since(start).Milliseconds()
 		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
-
+		utils.Log(slog.LevelError, "❌Error", "unable to initate request to pay, unable to create transaction", "data", gin.H{
+			"client_id":       xClientId,
+			"transaction_ref": xTransactionRef,
+			"request_body":    req,
+			"error":           err,
+		})
 		c.JSON(422, gin.H{
 			"code":    422,
 			"status":  "error",
@@ -136,6 +167,52 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 
 	tx.Commit()
 
+	if xCallbackUrl != "" && tStatus == "failed" {
+		disbursementservices.CallbackHandler(xCallbackUrl, models.CallbackPayload{
+			Code:    200,
+			Status:  "failed",
+			Message: "Transaction failed. Please try again.",
+			Data: models.CallbackPayloadData{
+				TransactionReference: xTransactionRef,
+				ExternalReference:    "",
+				Customer:             req.PhoneNumber,
+				Amount:               string(req.Amount),
+			},
+		})
+	}
+
+	if tStatus == "pending" || tStatus == "successful" {
+
+		if xCallbackUrl != "" {
+			disbursementservices.CallbackHandler(xCallbackUrl, models.CallbackPayload{
+				Code:    200,
+				Status:  "successful",
+				Message: "Transaction has been successfully processed and settled.",
+				Data: models.CallbackPayloadData{
+					TransactionReference: xTransactionRef,
+					ExternalReference:    tCode,
+					Customer:             req.PhoneNumber,
+					Amount:               string(req.Amount),
+				},
+			})
+		}
+	}
+
+	// if !req.IsFailed {
+	// 	elapsed := time.Since(start).Milliseconds()
+	// 	logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
+	// 	c.JSON(200, gin.H{
+	// 		"code":    402,
+	// 		"status":  "failed",
+	// 		"message": "Payment Failed: low balance or payee limit reached or not allowed",
+	// 		"data": gin.H{
+	// 			"transaction_reference": xTransactionRef,
+	// 		},
+	// 	})
+	// 	return
+	// }
+
 	if network == "mtn" || network == "airtel" {
 		elapsed := time.Since(start).Milliseconds()
 		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "success", strconv.FormatInt(elapsed, 10))
@@ -146,7 +223,6 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, req 
 			"message": "Request sent. Awaiting customer action.",
 			"data": gin.H{
 				"transaction_reference": xTransactionRef,
-				"external_reference":    tCode,
 			},
 		})
 		return

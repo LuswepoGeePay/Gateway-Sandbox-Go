@@ -83,13 +83,16 @@ func QueryDisbursement(c *gin.Context, xClientID string, xAuthSig string, Tref s
 		return
 	}
 
+	tCode := utils.GenerateTenDigitCode()
+
 	c.JSON(200, gin.H{
 		"code":    200,
 		"status":  "success",
-		"message": "Disbursement status fetched successfully.",
+		"message": "Transaction fetched successfully.",
 		"data": gin.H{
 			"status":                transaction.Status,
 			"transaction_reference": transaction.Reference,
+			"external reference":    "disburs: " + tCode,
 		},
 	})
 

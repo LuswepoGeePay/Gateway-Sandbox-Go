@@ -23,6 +23,7 @@ func HostedCheckOutHandler(c *gin.Context) {
 
 	var req hcheckout.HCheckoutRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+
 		c.JSON(400, gin.H{
 			"code":    400,
 			"status":  "error",

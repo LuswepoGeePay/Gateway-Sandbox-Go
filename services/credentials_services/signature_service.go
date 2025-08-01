@@ -9,6 +9,8 @@ import (
 	"pg_sandbox/models"
 	"pg_sandbox/proto/api"
 	"pg_sandbox/utils"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GenerateOAuthSignature(req *api.GenerateOAuthSignatureRequest) (*string, error) {
@@ -49,7 +51,10 @@ func GenerateOAuthSignature(req *api.GenerateOAuthSignatureRequest) (*string, er
 
 	if result.Error != nil {
 		tx.Rollback()
-		utils.Log(slog.LevelError, "Unable to add signature to db", "Error", result.Error)
+		utils.Log(slog.LevelError, "❌Error", "unable to add oauth signature to db ", "data", gin.H{
+			"error":        result.Error,
+			"request_body": req,
+		})
 		return nil, utils.CapitalizeError("Error adding signature to profile")
 	}
 
