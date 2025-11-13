@@ -86,6 +86,16 @@ type CheckOutUrls struct {
 	gorm.Model
 }
 
+type CardUrls struct {
+	ID            uuid.UUID `gorm:"type:uuid;primary_key"`
+	UserID        uuid.UUID `gorm:"type:uuid;not null"`
+	User          User      `gorm:"foreignKey:UserID"`
+	TransactionId string    `gorm:"default:null"`
+	Url           string    `gorm:"not null"`
+	Code          string    `gorm:"default:null"`
+	Verified      bool      `gorm:"default:false"`
+	gorm.Model
+}
 type APILogs struct {
 	ID           uuid.UUID `gorm:"type:uuid;primary_key"`
 	UserID       uuid.UUID `gorm:"type:uuid;not null"`

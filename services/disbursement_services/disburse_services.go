@@ -194,7 +194,7 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 		Reference: xTref,
 		Channel:   network,
 		Customer:  req.PhoneNumber,
-		Amount:    string(req.Amount),
+		Amount:    strconv.Itoa(int(req.Amount)),
 		Status:    tStatus,
 		Narration: req.Narration,
 		Type:      "disbursement",
@@ -231,7 +231,7 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 				TransactionReference: xTref,
 				ExternalReference:    tCode,
 				Customer:             req.PhoneNumber,
-				Amount:               string(req.Amount),
+				Amount:               strconv.Itoa(int(req.Amount)),
 			},
 		})
 	}

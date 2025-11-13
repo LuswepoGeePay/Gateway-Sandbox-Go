@@ -2,6 +2,7 @@ package routes
 
 import (
 	"pg_sandbox/controllers/auth"
+	"pg_sandbox/controllers/card"
 	"pg_sandbox/controllers/collection"
 	"pg_sandbox/controllers/dashboard"
 	"pg_sandbox/controllers/disbursement"
@@ -83,5 +84,10 @@ func SetupRoutes(r *gin.Engine) {
 	au.GET("/dashboard/transactions/info", dashboard.GetTransactionInfoHandler)
 	au.POST("/dashboard/transactions", dashboard.GetTransactionsHandler)
 	au.GET("/dashboard/transactions/channels", dashboard.GetTransactionsChannelHandler)
+
+	//cards
+	au.POST("/card/payment", card.MakeCardRequestHandler)
+	au.POST("/card/request-code", card.Send3DsCodeHandler)
+	au.POST("/card/verify-code", card.Verify3DsCodeHandler)
 
 }

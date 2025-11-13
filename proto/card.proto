@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package card;
+
+
+option go_package = "/proto/card;card";
+
+
+message cardRequest {
+    string card_number = 1;
+    string card_holder_name = 2; 
+    string security_code = 3;
+    string card_type = 4;
+    string amount = 5;
+    string currency = 6;
+    string description = 7;
+    string street = 8;
+    string city = 9;
+    string town = 10;
+    string province = 11;    
+    string code = 12;
+    string country = 13;
+    string user_id =14;
+    string base_url =15;
+}
+
+message cardResponse {
+    bool success = 1;
+    string message = 2;
+    string token = 3;
+    string status = 4;
+    string role = 5;
+    string id = 6;
+    repeated string permissions = 7; // List of permissions granted to the user
+    string tokenExpiry =9;
+  
+
+}
+
+message RequestCode {
+    string email = 1;
+    string user_id =2;
+    string transaction_reference =3;
+ }
+
+
+ message VerifyCode {
+    string code = 1;
+    string user_id =2;
+    string transaction_reference =3;
+ }

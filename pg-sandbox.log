@@ -17,3 +17,15 @@
 {"time":"2025-07-31T14:03:49.5438192+02:00","level":"ERROR","msg":"Error","Invalid Request Body":"Client ID","!BADKEY":"13dccf44-58b9-446c-a76e-c70af8bff948"}
 {"time":"2025-07-31T14:04:05.7125892+02:00","level":"ERROR","msg":"Error","Invalid Request Body":"Client ID","!BADKEY":"13dccf44-58b9-446c-a76e-c70af8bff948"}
 {"time":"2025-07-31T14:05:04.6623093+02:00","level":"ERROR","msg":"❌Error","unable to initate request to pay, client ID is invalid":"data","!BADKEY":{"amount":20,"client_id":"13dccf44-58b9-446c-a76e-c70af8bff94","phone_number":"0978790212","request_body":{"phone_number":"0978790212","amount":20},"transaction_ref":"TestReg3456"}}
+{"time":"2025-08-18T12:16:47.1174684+02:00","level":"ERROR","msg":"unable to find user","data":{"client_id":"de782a8c-b8f5-4222-8f7c-a76df1ad09ee","client_secret":"e6d1b2b8-c34a-47f7-a900-1417fea1cc94"}}
+{"time":"2025-09-22T09:17:38.3537634+02:00","level":"ERROR","msg":"❌Error","Unable to get API credentials, user not found":"data","!BADKEY":{"user_id":"da9455b8-5164-412d-bb5d-4ee6a79cc294"}}
+{"time":"2025-09-22T09:17:38.361134+02:00","level":"ERROR","msg":"❌Error","Unable to get API credentials, user not found":"data","!BADKEY":{"user_id":"da9455b8-5164-412d-bb5d-4ee6a79cc294"}}
+{"time":"2025-09-22T09:17:58.5173202+02:00","level":"ERROR","msg":"❌Error","Unable to Login":"detail","record not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
+{"time":"2025-09-22T09:17:58.5173202+02:00","level":"ERROR","msg":"❌Error","Unable to Login, user not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
+{"time":"2025-09-22T09:18:07.5479281+02:00","level":"ERROR","msg":"❌Error","User with role 'admin' cannot access the 'merchant' portal":"data","!BADKEY":{"email":"luswepo17@gmail.com"}}
+{"time":"2025-11-13T09:04:48.1964175+02:00","level":"ERROR","msg":"❌Error","Unable to Login":"detail","record not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
+{"time":"2025-11-13T09:04:48.1974943+02:00","level":"ERROR","msg":"❌Error","Unable to Login, user not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
+{"time":"2025-11-13T09:05:09.6478417+02:00","level":"ERROR","msg":"❌Error","Unable to Login":"detail","record not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
+{"time":"2025-11-13T09:05:09.6478417+02:00","level":"ERROR","msg":"❌Error","Unable to Login, user not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
+{"time":"2025-11-13T09:05:24.1137126+02:00","level":"ERROR","msg":"❌Error","User with role 'admin' cannot access the 'merchant' portal":"data","!BADKEY":{"email":"luswepo17@gmail.com"}}
+{"time":"2025-11-13T09:05:30.3358707+02:00","level":"ERROR","msg":"❌Error","User with role 'admin' cannot access the 'merchant' portal":"data","!BADKEY":{"email":"luswepo17@gmail.com"}}

@@ -8,8 +8,8 @@ option go_package = "/proto/collection;collection";
 
 message CollectionRequest {
     string phone_number = 1;
-    int32 amount = 2;
-    //bool isFailed = 10;
+    int32 amount = 2; 
+    bool isFailed = 3;
 
 }
 

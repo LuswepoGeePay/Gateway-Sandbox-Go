@@ -115,17 +115,19 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, xCal
 
 	tStatus := ""
 
-	// if req.IsFailed {
+	if req.IsFailed {
+		tStatus = "failed"
+	}
 
-	// 	tStatus = "failed"
-	// }
-
-	if network == "mtn" {
+	switch network {
+	case "mtn":
 		tStatus = "pending"
-	} else if network == "airtel" {
+	case "airtel":
 		tStatus = "pending"
-	} else if network == "zamtel" {
+	case "zamtel":
 		tStatus = "successful"
+	default:
+		tStatus = "pending"
 	}
 
 	transaction := models.Transactions{
@@ -133,7 +135,7 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, xCal
 		Reference: xTransactionRef,
 		Channel:   network,
 		Customer:  req.PhoneNumber,
-		Amount:    string(req.Amount),
+		Amount:    strconv.Itoa(int(req.Amount)),
 		Status:    tStatus,
 		Type:      "collection",
 		Date:      time.Now(),
@@ -176,7 +178,7 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, xCal
 				TransactionReference: xTransactionRef,
 				ExternalReference:    "",
 				Customer:             req.PhoneNumber,
-				Amount:               string(req.Amount),
+				Amount:               strconv.Itoa(int(req.Amount)),
 			},
 		})
 	}
@@ -192,26 +194,41 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, xCal
 					TransactionReference: xTransactionRef,
 					ExternalReference:    tCode,
 					Customer:             req.PhoneNumber,
-					Amount:               string(req.Amount),
+					Amount:               strconv.Itoa(int(req.Amount)),
 				},
 			})
 		}
 	}
 
-	// if !req.IsFailed {
-	// 	elapsed := time.Since(start).Milliseconds()
-	// 	logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
+	if req.IsFailed && network == "mtn" || network == "airtel" {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
 
-	// 	c.JSON(200, gin.H{
-	// 		"code":    402,
-	// 		"status":  "failed",
-	// 		"message": "Payment Failed: low balance or payee limit reached or not allowed",
-	// 		"data": gin.H{
-	// 			"transaction_reference": xTransactionRef,
-	// 		},
-	// 	})
-	// 	return
-	// }
+		c.JSON(200, gin.H{
+			"code":    402,
+			"status":  "failed",
+			"message": "Payment Failed: low balance or payee limit reached or not allowed",
+			"data": gin.H{
+				"transaction_reference": xTransactionRef,
+			},
+		})
+		return
+	}
+
+	if req.IsFailed && network == "zamtel" {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
+		c.JSON(200, gin.H{
+			"code":    402,
+			"status":  "failed",
+			"message": "System internal error.",
+			"data": gin.H{
+				"transaction_reference": xTransactionRef,
+			},
+		})
+		return
+	}
 
 	if network == "mtn" || network == "airtel" {
 		elapsed := time.Since(start).Milliseconds()

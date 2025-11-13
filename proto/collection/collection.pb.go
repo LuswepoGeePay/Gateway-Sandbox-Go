@@ -24,7 +24,8 @@ const (
 type CollectionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	PhoneNumber   string                 `protobuf:"bytes,1,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
-	Amount        int32                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"` //bool isFailed = 10;
+	Amount        int32                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	IsFailed      bool                   `protobuf:"varint,3,opt,name=isFailed,proto3" json:"isFailed,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -71,6 +72,13 @@ func (x *CollectionRequest) GetAmount() int32 {
 		return x.Amount
 	}
 	return 0
+}
+
+func (x *CollectionRequest) GetIsFailed() bool {
+	if x != nil {
+		return x.IsFailed
+	}
+	return false
 }
 
 type CollectionResponse struct {
@@ -178,10 +186,11 @@ var File_collection_proto protoreflect.FileDescriptor
 const file_collection_proto_rawDesc = "" +
 	"\n" +
 	"\x10collection.proto\x12\n" +
-	"collection\"N\n" +
+	"collection\"j\n" +
 	"\x11CollectionRequest\x12!\n" +
 	"\fphone_number\x18\x01 \x01(\tR\vphoneNumber\x12\x16\n" +
-	"\x06amount\x18\x02 \x01(\x05R\x06amount\"\xde\x01\n" +
+	"\x06amount\x18\x02 \x01(\x05R\x06amount\x12\x1a\n" +
+	"\bisFailed\x18\x03 \x01(\bR\bisFailed\"\xde\x01\n" +
 	"\x12collectionResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12\x14\n" +

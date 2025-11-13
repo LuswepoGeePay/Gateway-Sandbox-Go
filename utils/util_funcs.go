@@ -33,10 +33,13 @@ func GetNetworkProvider(phonenumber string) (string, error) {
 	providerMap := map[string]string{
 		"096": "mtn",
 		"076": "mtn",
+		"056": "mtn",
 		"097": "airtel",
 		"077": "airtel",
+		"057": "airtel",
 		"095": "zamtel",
 		"075": "zamtel",
+		"055": "zamtel",
 	}
 
 	// Get the provider based on the prefix
