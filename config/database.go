@@ -19,7 +19,7 @@ func InitDB() {
 	var err error
 
 	// dsn := "root@tcp(127.0.0.1:3306)/pgsandbox?charset=utf8mb4&parseTime=True&loc=Local"
-	dsn := os.Getenv("DB_URL2")
+	dsn := os.Getenv("DB_URL")
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect to the database: %v", err)
