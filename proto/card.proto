@@ -14,14 +14,8 @@ message cardRequest {
     string amount = 5;
     string currency = 6;
     string description = 7;
-    string street = 8;
-    string city = 9;
-    string town = 10;
-    string province = 11;    
-    string code = 12;
-    string country = 13;
-    string user_id =14;
-    string base_url =15;
+    string user_id =9;
+    string base_url =10;
 }
 
 message cardResponse {
@@ -32,15 +26,13 @@ message cardResponse {
     string role = 5;
     string id = 6;
     repeated string permissions = 7; // List of permissions granted to the user
-    string tokenExpiry =9;
-  
+    string tokenExpiry =8;
 
 }
 
 message RequestCode {
-    string email = 1;
-    string user_id =2;
-    string transaction_reference =3;
+    string user_id =1;
+    string transaction_reference =2;
  }
 
 

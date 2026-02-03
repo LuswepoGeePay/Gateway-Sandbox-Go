@@ -29,3 +29,15 @@
 {"time":"2025-11-13T09:05:09.6478417+02:00","level":"ERROR","msg":"❌Error","Unable to Login, user not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
 {"time":"2025-11-13T09:05:24.1137126+02:00","level":"ERROR","msg":"❌Error","User with role 'admin' cannot access the 'merchant' portal":"data","!BADKEY":{"email":"luswepo17@gmail.com"}}
 {"time":"2025-11-13T09:05:30.3358707+02:00","level":"ERROR","msg":"❌Error","User with role 'admin' cannot access the 'merchant' portal":"data","!BADKEY":{"email":"luswepo17@gmail.com"}}
+{"time":"2025-12-17T10:52:19.1194934+02:00","level":"ERROR","msg":"❌Error","Unable to Login":"detail","record not found":"data","!BADKEY":{"email":"luswepo@geepay.co.zm"}}
+{"time":"2025-12-17T10:52:19.1229665+02:00","level":"ERROR","msg":"❌Error","Unable to Login, user not found":"data","!BADKEY":{"email":"luswepo@geepay.co.zm"}}
+{"time":"2025-12-17T10:59:31.5837885+02:00","level":"ERROR","msg":"❌Error","Unable to Login":"detail","record not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
+{"time":"2025-12-17T10:59:31.5837885+02:00","level":"ERROR","msg":"❌Error","Unable to Login, user not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
+{"time":"2025-12-17T11:07:52.052113+02:00","level":"ERROR","msg":"❌Error","User with role 'merchant' cannot access the '' portal":"data","!BADKEY":{"email":"chitimbwabanda@gmail.com"}}
+{"time":"2025-12-17T11:31:52.0104423+02:00","level":"ERROR","msg":"❌Error","unable to validate token":"data","!BADKEY":{"error":{"Inner":{},"Errors":4}}}
+{"time":"2025-12-17T11:32:11.7085716+02:00","level":"ERROR","msg":"❌Error","unable to validate token":"data","!BADKEY":{"error":{"Inner":{},"Errors":4}}}
+{"time":"2025-12-17T11:34:02.0166812+02:00","level":"ERROR","msg":"❌Error","unable to validate token":"data","!BADKEY":{"error":{"Inner":{},"Errors":4}}}
+{"time":"2025-12-17T11:34:05.5571108+02:00","level":"ERROR","msg":"❌Error","unable to validate token":"data","!BADKEY":{"error":{"Inner":{},"Errors":4}}}
+{"time":"2025-12-17T11:35:14.1894728+02:00","level":"ERROR","msg":"Error","Invalid Request Body":"Client ID","!BADKEY":"bc7c8b16-8f4a-4b58-8329-4976a948b115"}
+{"time":"2025-12-17T11:44:30.0260504+02:00","level":"ERROR","msg":"❌Error","unable to validate token":"data","!BADKEY":{"error":{"Inner":{},"Errors":4}}}
+{"time":"2025-12-17T14:15:06.6376779+02:00","level":"ERROR","msg":"Error","Invalid Request Body":"Client ID","!BADKEY":"bc7c8b16-8f4a-4b58-8329-4976a948b115"}

@@ -86,8 +86,8 @@ func SetupRoutes(r *gin.Engine) {
 	au.GET("/dashboard/transactions/channels", dashboard.GetTransactionsChannelHandler)
 
 	//cards
-	au.POST("/card/payment", card.MakeCardRequestHandler)
-	au.POST("/card/request-code", card.Send3DsCodeHandler)
-	au.POST("/card/verify-code", card.Verify3DsCodeHandler)
+	r.POST("/v1/card/payment", card.MakeCardRequestHandler)
+	r.POST("/v1/card/request-code", card.Send3DsCodeHandler)
+	r.POST("/v1/card/verify-code", card.Verify3DsCodeHandler)
 
 }

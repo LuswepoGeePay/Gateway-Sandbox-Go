@@ -30,14 +30,8 @@ type CardRequest struct {
 	Amount         string                 `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`
 	Currency       string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
 	Description    string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
-	Street         string                 `protobuf:"bytes,8,opt,name=street,proto3" json:"street,omitempty"`
-	City           string                 `protobuf:"bytes,9,opt,name=city,proto3" json:"city,omitempty"`
-	Town           string                 `protobuf:"bytes,10,opt,name=town,proto3" json:"town,omitempty"`
-	Province       string                 `protobuf:"bytes,11,opt,name=province,proto3" json:"province,omitempty"`
-	Code           string                 `protobuf:"bytes,12,opt,name=code,proto3" json:"code,omitempty"`
-	Country        string                 `protobuf:"bytes,13,opt,name=country,proto3" json:"country,omitempty"`
-	UserId         string                 `protobuf:"bytes,14,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	BaseUrl        string                 `protobuf:"bytes,15,opt,name=base_url,json=baseUrl,proto3" json:"base_url,omitempty"`
+	UserId         string                 `protobuf:"bytes,9,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	BaseUrl        string                 `protobuf:"bytes,10,opt,name=base_url,json=baseUrl,proto3" json:"base_url,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -121,48 +115,6 @@ func (x *CardRequest) GetDescription() string {
 	return ""
 }
 
-func (x *CardRequest) GetStreet() string {
-	if x != nil {
-		return x.Street
-	}
-	return ""
-}
-
-func (x *CardRequest) GetCity() string {
-	if x != nil {
-		return x.City
-	}
-	return ""
-}
-
-func (x *CardRequest) GetTown() string {
-	if x != nil {
-		return x.Town
-	}
-	return ""
-}
-
-func (x *CardRequest) GetProvince() string {
-	if x != nil {
-		return x.Province
-	}
-	return ""
-}
-
-func (x *CardRequest) GetCode() string {
-	if x != nil {
-		return x.Code
-	}
-	return ""
-}
-
-func (x *CardRequest) GetCountry() string {
-	if x != nil {
-		return x.Country
-	}
-	return ""
-}
-
 func (x *CardRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
@@ -186,7 +138,7 @@ type CardResponse struct {
 	Role          string                 `protobuf:"bytes,5,opt,name=role,proto3" json:"role,omitempty"`
 	Id            string                 `protobuf:"bytes,6,opt,name=id,proto3" json:"id,omitempty"`
 	Permissions   []string               `protobuf:"bytes,7,rep,name=permissions,proto3" json:"permissions,omitempty"` // List of permissions granted to the user
-	TokenExpiry   string                 `protobuf:"bytes,9,opt,name=tokenExpiry,proto3" json:"tokenExpiry,omitempty"`
+	TokenExpiry   string                 `protobuf:"bytes,8,opt,name=tokenExpiry,proto3" json:"tokenExpiry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -279,9 +231,8 @@ func (x *CardResponse) GetTokenExpiry() string {
 
 type RequestCode struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
-	Email                string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	UserId               string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	TransactionReference string                 `protobuf:"bytes,3,opt,name=transaction_reference,json=transactionReference,proto3" json:"transaction_reference,omitempty"`
+	UserId               string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TransactionReference string                 `protobuf:"bytes,2,opt,name=transaction_reference,json=transactionReference,proto3" json:"transaction_reference,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -314,13 +265,6 @@ func (x *RequestCode) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RequestCode.ProtoReflect.Descriptor instead.
 func (*RequestCode) Descriptor() ([]byte, []int) {
 	return file_card_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *RequestCode) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
 }
 
 func (x *RequestCode) GetUserId() string {
@@ -402,7 +346,7 @@ var File_card_proto protoreflect.FileDescriptor
 const file_card_proto_rawDesc = "" +
 	"\n" +
 	"\n" +
-	"card.proto\x12\x04card\"\xae\x03\n" +
+	"card.proto\x12\x04card\"\xa4\x02\n" +
 	"\vcardRequest\x12\x1f\n" +
 	"\vcard_number\x18\x01 \x01(\tR\n" +
 	"cardNumber\x12(\n" +
@@ -411,16 +355,10 @@ const file_card_proto_rawDesc = "" +
 	"\tcard_type\x18\x04 \x01(\tR\bcardType\x12\x16\n" +
 	"\x06amount\x18\x05 \x01(\tR\x06amount\x12\x1a\n" +
 	"\bcurrency\x18\x06 \x01(\tR\bcurrency\x12 \n" +
-	"\vdescription\x18\a \x01(\tR\vdescription\x12\x16\n" +
-	"\x06street\x18\b \x01(\tR\x06street\x12\x12\n" +
-	"\x04city\x18\t \x01(\tR\x04city\x12\x12\n" +
-	"\x04town\x18\n" +
-	" \x01(\tR\x04town\x12\x1a\n" +
-	"\bprovince\x18\v \x01(\tR\bprovince\x12\x12\n" +
-	"\x04code\x18\f \x01(\tR\x04code\x12\x18\n" +
-	"\acountry\x18\r \x01(\tR\acountry\x12\x17\n" +
-	"\auser_id\x18\x0e \x01(\tR\x06userId\x12\x19\n" +
-	"\bbase_url\x18\x0f \x01(\tR\abaseUrl\"\xd8\x01\n" +
+	"\vdescription\x18\a \x01(\tR\vdescription\x12\x17\n" +
+	"\auser_id\x18\t \x01(\tR\x06userId\x12\x19\n" +
+	"\bbase_url\x18\n" +
+	" \x01(\tR\abaseUrl\"\xd8\x01\n" +
 	"\fcardResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12\x14\n" +
@@ -429,11 +367,10 @@ const file_card_proto_rawDesc = "" +
 	"\x04role\x18\x05 \x01(\tR\x04role\x12\x0e\n" +
 	"\x02id\x18\x06 \x01(\tR\x02id\x12 \n" +
 	"\vpermissions\x18\a \x03(\tR\vpermissions\x12 \n" +
-	"\vtokenExpiry\x18\t \x01(\tR\vtokenExpiry\"q\n" +
-	"\vRequestCode\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\tR\x06userId\x123\n" +
-	"\x15transaction_reference\x18\x03 \x01(\tR\x14transactionReference\"n\n" +
+	"\vtokenExpiry\x18\b \x01(\tR\vtokenExpiry\"[\n" +
+	"\vRequestCode\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x123\n" +
+	"\x15transaction_reference\x18\x02 \x01(\tR\x14transactionReference\"n\n" +
 	"\n" +
 	"VerifyCode\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x17\n" +

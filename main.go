@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	config.LoadEnv()
 	err := utils.InitLogger("pg-sandbox.log")
 
 	if err != nil {

@@ -1,8 +1,9 @@
 package models
 
 type GetRequest struct {
-	Page     int `json:"page"`
-	PageSize int `json:"pageSize"`
+	Page        int    `json:"page"`
+	PageSize    int    `json:"pageSize"`
+	SearchQuery string `json:"search_query,omitempty"`
 }
 
 func (p *GetRequest) SetDefaults() {

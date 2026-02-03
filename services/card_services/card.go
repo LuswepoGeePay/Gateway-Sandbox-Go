@@ -46,6 +46,26 @@ func InitiateCardPayment(c *gin.Context, xClientId string, xTransactionRef strin
 		})
 		return
 	}
+	if req.CardNumber == "" || req.Amount == "" || xTransactionRef == "" {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/card/payment", "POST", "failed", strconv.FormatInt(elapsed, 10))
+		utils.Log(slog.LevelError, "❌Error", "unable to initiate card payment, card details or amount is empty", "data", gin.H{
+			"client_id":       xClientId,
+			"transaction_ref": xTransactionRef,
+			"request_body":    req,
+		})
+		c.JSON(402, gin.H{
+			"code":    402,
+			"status":  "error",
+			"message": "Validation failed.",
+			"errors": gin.H{
+				"X-Card-Number":     []string{"Card number cannot be empty."},
+				"X-Amount":          []string{"Amount cannot be empty."},
+				"X-Transaction-Ref": []string{"Transaction reference cannot be empty."},
+			},
+		})
+		return
+	}
 
 	if strings.TrimSpace(xTransactionRef) == "" {
 		elapsed := time.Since(start).Milliseconds()
@@ -99,8 +119,9 @@ func InitiateCardPayment(c *gin.Context, xClientId string, xTransactionRef strin
 		Reference: xTransactionRef,
 		Amount:    req.Amount,
 		Status:    "pending",
-		Customer:  "",
-		Type:      "card",
+		Customer:  req.CardHolderName,
+		Channel:   "card",
+		Type:      "collection",
 		Date:      time.Now(),
 	}
 
@@ -128,11 +149,12 @@ func InitiateCardPayment(c *gin.Context, xClientId string, xTransactionRef strin
 	cardUrl := req.BaseUrl + urlId.String()
 
 	cardUrlModel := models.CardUrls{
-		ID:       uuid.New(),
-		Url:      cardUrl,
-		UserID:   uuid.MustParse(req.UserId),
-		Code:     "",
-		Verified: false,
+		ID:            uuid.New(),
+		Url:           cardUrl,
+		UserID:        uuid.MustParse(req.UserId),
+		Code:          "",
+		Verified:      false,
+		TransactionId: xTransactionRef,
 	}
 
 	result = tx.Create(&cardUrlModel)
@@ -153,9 +175,11 @@ func InitiateCardPayment(c *gin.Context, xClientId string, xTransactionRef strin
 		return
 	}
 
+	tx.Commit()
+
 	c.JSON(200, gin.H{
 		"status":                "success",
-		"message":               "Card session created",
+		"message":               "Card transaction created",
 		"url":                   cardUrl,
 		"transaction_reference": xTransactionRef,
 	})
@@ -186,9 +210,15 @@ func SendCodeAccountHolder(req *card.RequestCode) error {
 		return err
 	}
 
+	var user models.User
+
+	if err := config.DB.Where("id = ?", req.UserId).Find(&user).Error; err != nil {
+		return err
+	}
+
 	m := gomail.NewMessage()
 	m.SetHeader("From", "gpgsnoreply@gmail.com")
-	m.SetHeader("To", req.Email)
+	m.SetHeader("To", user.Email)
 	m.SetHeader("Subject", "OTP Code")
 	m.SetBody("text/html", body.String())
 
@@ -239,10 +269,10 @@ func VerifyCardCode(req *card.VerifyCode) error {
 
 	tx := config.DB.Begin()
 
-	err := tx.Where("transaction_reference = ? AND  user_id = ?", req.TransactionReference, req.UserId).First(&url).Error
+	err := tx.Where("transaction_id = ? AND  user_id = ?", req.TransactionReference, req.UserId).First(&url).Error
 
 	if err != nil {
-		return utils.CapitalizeError("failed to find url")
+		return utils.CapitalizeError("failed to find transaction")
 	}
 
 	updates := map[string]interface{}{}
@@ -257,6 +287,16 @@ func VerifyCardCode(req *card.VerifyCode) error {
 
 	if err := tx.Model(&models.CardUrls{}).Where("id = ?", url.ID).Updates(updates).Error; err != nil {
 		tx.Rollback()
+		return err
+	}
+
+	var transaction models.Transactions
+	if err := config.DB.Where("reference = ?", req.TransactionReference).First(&transaction).Error; err != nil {
+		return err
+	}
+
+	transaction.Status = "successful" // Update status to completed after OTP verification
+	if err := config.DB.Save(&transaction).Error; err != nil {
 		return err
 	}
 
