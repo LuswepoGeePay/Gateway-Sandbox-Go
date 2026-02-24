@@ -17,7 +17,7 @@ import (
 
 func SendCodeMail(req *mail.SendMailRequest) error {
 
-	emailTemplate, err := template.ParseFiles("./email_template.html")
+	emailTemplate, err := template.New("verification").Parse(VerificationEmailTemplate)
 
 	if err != nil {
 		return err
@@ -27,7 +27,7 @@ func SendCodeMail(req *mail.SendMailRequest) error {
 
 	var body bytes.Buffer
 
-	err = emailTemplate.Execute(&body, struct{ Name string }{Name: code})
+	err = emailTemplate.Execute(&body, struct{ Code string }{Code: code})
 
 	if err != nil {
 		return err
@@ -152,12 +152,7 @@ func VerifyEmail(req *mail.VerifyEmail) error {
 
 func SendChangePasswordCode(req *mail.SendMailRequest) error {
 
-	// resetTemp := os.Getenv("RESET_PASSWORD_TEMPLATE_FILE")
-	// if resetTemp == "" {
-	// 	return utils.CapitalizeError("RESET_PASSWORD_FILE environment variable is not set")
-	// }
-
-	emailTemplate, err := template.ParseFiles("../reset_password.html")
+	emailTemplate, err := template.New("reset").Parse(ResetPasswordEmailTemplate)
 
 	if err != nil {
 		return err
@@ -167,7 +162,7 @@ func SendChangePasswordCode(req *mail.SendMailRequest) error {
 
 	code := utils.GenerateSixDigitCode()
 
-	err = emailTemplate.Execute(&body, struct{ Name string }{Name: code})
+	err = emailTemplate.Execute(&body, struct{ Code string }{Code: code})
 
 	if err != nil {
 		return err

@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"html/template"
 	"log/slog"
 	"pg_sandbox/config"
 	"pg_sandbox/models"
 	"pg_sandbox/proto/card"
+	emailsvc "pg_sandbox/services/email_services.go"
 	"pg_sandbox/services/logs"
 	"pg_sandbox/utils"
 	"strings"
-	"text/template"
 
 	"strconv"
 	"time"
@@ -194,7 +195,7 @@ func SendCodeAccountHolder(req *card.RequestCode) error {
 		return err
 	}
 
-	emailTemplate, err := template.ParseFiles("./send_code.html")
+	emailTemplate, err := template.New("card-otp").Parse(emailsvc.CardOTPTemplate)
 
 	if err != nil {
 		return err
@@ -204,7 +205,7 @@ func SendCodeAccountHolder(req *card.RequestCode) error {
 
 	var body bytes.Buffer
 
-	err = emailTemplate.Execute(&body, struct{ Name string }{Name: code})
+	err = emailTemplate.Execute(&body, struct{ Code string }{Code: code})
 
 	if err != nil {
 		return err
