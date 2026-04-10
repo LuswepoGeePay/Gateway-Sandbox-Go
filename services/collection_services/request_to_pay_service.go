@@ -117,17 +117,17 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, xCal
 
 	if req.IsFailed {
 		tStatus = "failed"
-	}
-
-	switch network {
-	case "mtn":
-		tStatus = "pending"
-	case "airtel":
-		tStatus = "pending"
-	case "zamtel":
-		tStatus = "successful"
-	default:
-		tStatus = "pending"
+	} else {
+		switch network {
+		case "mtn":
+			tStatus = "pending"
+		case "airtel":
+			tStatus = "pending"
+		case "zamtel":
+			tStatus = "successful"
+		default:
+			tStatus = "pending"
+		}
 	}
 
 	transaction := models.Transactions{
@@ -200,7 +200,7 @@ func RequestToPay(c *gin.Context, xClientId string, xTransactionRef string, xCal
 		}
 	}
 
-	if req.IsFailed && network == "mtn" || network == "airtel" {
+	if req.IsFailed && (network == "mtn" || network == "airtel") {
 		elapsed := time.Since(start).Milliseconds()
 		logs.LogApiCall(c, existingClientID.UserID.String(), "/v1/mobile-money/collect", "POST", "failed", strconv.FormatInt(elapsed, 10))
 
