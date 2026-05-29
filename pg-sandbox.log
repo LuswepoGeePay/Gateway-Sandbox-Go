@@ -41,3 +41,7 @@
 {"time":"2025-12-17T11:35:14.1894728+02:00","level":"ERROR","msg":"Error","Invalid Request Body":"Client ID","!BADKEY":"bc7c8b16-8f4a-4b58-8329-4976a948b115"}
 {"time":"2025-12-17T11:44:30.0260504+02:00","level":"ERROR","msg":"❌Error","unable to validate token":"data","!BADKEY":{"error":{"Inner":{},"Errors":4}}}
 {"time":"2025-12-17T14:15:06.6376779+02:00","level":"ERROR","msg":"Error","Invalid Request Body":"Client ID","!BADKEY":"bc7c8b16-8f4a-4b58-8329-4976a948b115"}
+{"time":"2026-05-29T11:01:37.9179211+02:00","level":"ERROR","msg":"❌Error","Unable to Login":"detail","record not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
+{"time":"2026-05-29T11:01:37.9184261+02:00","level":"ERROR","msg":"❌Error","Unable to Login, user not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
+{"time":"2026-05-29T13:16:53.5155315+02:00","level":"ERROR","msg":"❌Error","Unable to Login":"detail","record not found":"data","!BADKEY":{"email":"luswepo17gmail.com"}}
+{"time":"2026-05-29T13:16:53.5155315+02:00","level":"ERROR","msg":"❌Error","Unable to Login, user not found":"data","!BADKEY":{"email":"luswepo17gmail.com"}}

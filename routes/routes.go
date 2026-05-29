@@ -50,17 +50,31 @@ func SetupRoutes(r *gin.Engine) {
 	au.POST("/signature/generate", auth.GenerateOAuthSignatureHandler)
 	au.POST("/pin/create", auth.SetPinHandler)
 	au.GET("/user/credentials/get/:id", auth.GetAPICredentialsHandler)
-	r.GET("/v1/mobile-money/check-status/:id", transactions.TransactionQueryHandler)
+	// r.GET("/v1/mobile-money/check-status/:id", transactions.TransactionQueryHandler) // Removed duplicate param
+	r.GET("/v1/mobile-money/check-status/:transactionRef", transactions.TransactionQueryHandler)
+	r.GET("/api/v1/mobile-money/check-status/:transactionRef", transactions.TransactionQueryHandler)
+
 	r.GET("/v1/mobile-money/name-lookup/:number", users.NameLookUpHandler)
+	r.GET("/api/v1/mobile-money/name-lookup/:phone", users.NameLookUpHandler)
+
 	r.POST("/v1/mobile-money/disburse", disbursement.MakeDisbursementHandler)
+	r.POST("/api/v1/mobile-money/disburse", disbursement.MakeDisbursementHandler)
+
 	r.GET("/v1/mobile-money/disburse/status/:reference", disbursement.QueryDisbursementHandler)
+	r.GET("/api/v1/mobile-money/disburse/status/:transactionRef", disbursement.QueryDisbursementHandler)
+
 	au.POST("/float/update", users.SetFloatBalanceHander)
+
 	r.POST("/v1/checkout/session", hostedcheckout.HostedCheckOutHandler)
+	r.POST("/api/v1/checkout/session", hostedcheckout.HostedCheckOutHandler)
+
 	r.GET("/v1/checkout/get/:id", hostedcheckout.GetHostedCheckoutDetailsHandler)
 	r.POST("/callback", users.CallbackHandler)
 	r.POST("/v1/checkout/respond/:condition", hostedcheckout.HostedCheckoutResponseHandler)
 	r.POST("/v1/reset/password", users.ResetPasswordHandler)
+
 	r.GET("/v1/mobile-money/disburse/balance", disbursement.CheckDisbursementBalance)
+	r.GET("/api/v1/mobile-money/disburse/balance", disbursement.CheckDisbursementBalance)
 
 	//dashboard
 	au.GET("/overview/cards", dashboard.GetOverviewCardsInfoHandler)

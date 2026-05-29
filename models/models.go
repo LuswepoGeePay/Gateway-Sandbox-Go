@@ -76,10 +76,10 @@ type CheckOutUrls struct {
 	OrderID       string    `gorm:"default:null"`
 	CustomerName  string    `gorm:"default:null"`
 	CustomerEmail string    `gorm:"default:null"`
-	ReturnUrl     string    `gorm:"default:null"`
-	SuccessUrl    string    `gorm:"default:null"`
-	FailedUrl     string    `gorm:"default:null"`
-	CancelUrl     string    `gorm:"default:null"`
+	ReturnUrl     string    `gorm:"type:text"`
+	SuccessUrl    string    `gorm:"type:text"`
+	FailedUrl     string    `gorm:"type:text"`
+	CancelUrl     string    `gorm:"type:text"`
 	Amount        string    `gorm:"default:null"`
 	GeneratedUrl  string    `gorm:"default:null"`
 	TReference    string    `gorm:"default:null"`

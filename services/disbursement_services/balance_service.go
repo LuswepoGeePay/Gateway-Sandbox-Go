@@ -72,12 +72,12 @@ func CheckDisbursementBalance(c *gin.Context, xClientID string, xAuthSignature s
 
 	c.JSON(200, gin.H{
 		"status":  "success",
-		"message": "Disbursement balance fetched successfully.",
+		"message": "Funds disbursed successfully.",
 		"data": gin.H{
 			"merchant":     user.Fullname,
 			"balance":      existingClient.FloatBalance,
 			"currency":     "ZMW",
-			"last_updated": existingClient.UpdatedAt,
+			"last_updated": existingClient.UpdatedAt.Format("2006-01-02 15:04:05"),
 		},
 	})
 

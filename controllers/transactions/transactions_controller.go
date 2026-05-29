@@ -15,7 +15,10 @@ func TransactionQueryHandler(c *gin.Context) {
 		return
 	}
 
-	transactionID := c.Param("id")
+	transactionID := c.Param("transactionRef")
+	if transactionID == "" {
+		transactionID = c.Param("id")
+	}
 	transactionservices.TransactionQuery(c, transactionID)
 
 }

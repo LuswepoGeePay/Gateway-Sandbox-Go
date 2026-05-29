@@ -44,10 +44,10 @@ func TransactionQuery(c *gin.Context, transationRef string) {
 	c.JSON(200, gin.H{
 		"code":    200,
 		"status":  "success",
-		"message": "Transaction Status Fetched successfully",
+		"message": "Transaction fetched successfully.",
 		"data": gin.H{
 			"status":                "successful",
-			"message":               "Transaction was processed successfully",
+			"message":               "Transaction was processed successfully.",
 			"transaction_reference": transaction.Reference,
 			"external_reference":    tCode,
 		},

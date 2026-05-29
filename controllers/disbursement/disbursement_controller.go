@@ -45,7 +45,10 @@ func MakeDisbursementHandler(c *gin.Context) {
 
 func QueryDisbursementHandler(c *gin.Context) {
 
-	ref := c.Param("reference")
+	ref := c.Param("transactionRef")
+	if ref == "" {
+		ref = c.Param("reference")
+	}
 
 	xClientID := c.GetHeader("X-Client-ID")
 	xAuthSignature := c.GetHeader("X-Auth-Signature")

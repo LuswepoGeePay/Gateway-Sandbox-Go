@@ -27,11 +27,10 @@ func NameLookUp(c *gin.Context, phoneNumber string) {
 
 	if network == "mtn" {
 		c.JSON(200, gin.H{
-			"code":    "200",
+			"code":    200,
 			"status":  "success",
 			"message": "Name lookup completed successfully.",
 			"data": gin.H{
-				"status":       "success",
 				"provider":     "MTN",
 				"phone_number": phoneNumber,
 				"names":        "John MTN Doe",
@@ -43,11 +42,10 @@ func NameLookUp(c *gin.Context, phoneNumber string) {
 
 	if network == "airtel" {
 		c.JSON(200, gin.H{
-			"code":    "200",
+			"code":    200,
 			"status":  "success",
 			"message": "Name lookup completed successfully.",
 			"data": gin.H{
-				"status":       "success",
 				"provider":     "Airtel",
 				"phone_number": phoneNumber,
 				"names":        "Alice Airtel Bob",
@@ -58,11 +56,10 @@ func NameLookUp(c *gin.Context, phoneNumber string) {
 	}
 	if network == "zamtel" {
 		c.JSON(200, gin.H{
-			"code":    "200",
+			"code":    200,
 			"status":  "success",
 			"message": "Name lookup completed successfully.",
 			"data": gin.H{
-				"status":       "success",
 				"provider":     "Zamtel",
 				"phone_number": phoneNumber,
 				"names":        "Nagato Zamtel Gato",

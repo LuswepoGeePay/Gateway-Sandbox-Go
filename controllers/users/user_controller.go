@@ -16,7 +16,10 @@ import (
 
 func NameLookUpHandler(c *gin.Context) {
 
-	number := c.Param("number")
+	number := c.Param("phone")
+	if number == "" {
+		number = c.Param("number")
+	}
 
 	commonservices.CheckEssentialHeaders(c)
 

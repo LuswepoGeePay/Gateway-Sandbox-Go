@@ -194,7 +194,7 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 		Reference: xTref,
 		Channel:   network,
 		Customer:  req.PhoneNumber,
-		Amount:    strconv.Itoa(int(req.Amount)),
+		Amount:    strconv.FormatFloat(float64(req.Amount), 'f', 2, 64),
 		Status:    tStatus,
 		Narration: req.Narration,
 		Type:      "disbursement",
@@ -231,57 +231,24 @@ func MakeDisbursement(c *gin.Context, req *disbursement.DisbursementRequest, xCl
 				TransactionReference: xTref,
 				ExternalReference:    tCode,
 				Customer:             req.PhoneNumber,
-				Amount:               strconv.Itoa(int(req.Amount)),
+				Amount:               strconv.FormatFloat(float64(req.Amount), 'f', 2, 64),
 			},
 		})
 	}
-
-	// if xCallbackUrl != "" && req.IsFailed {
-	// 	CallbackHandler(xCallbackUrl, models.CallbackPayload{
-	// 		Code:    402,
-	// 		Status:  "failed",
-	// 		Message: "Transaction failed. Please try again.",
-	// 		Data: models.CallbackPayloadData{
-	// 			TransactionReference: xTref,
-	// 			ExternalReference:    "",
-	// 			Customer:             req.PhoneNumber,
-	// 			Amount:               string(req.Amount),
-	// 		},
-	// 	})
-	// }
 
 	tx.Commit()
 
-	if network == "mtn" || network == "airtel" {
-		elapsed := time.Since(start).Milliseconds()
-		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "success", strconv.FormatInt(elapsed, 10))
+	elapsed := time.Since(start).Milliseconds()
+	logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "success", strconv.FormatInt(elapsed, 10))
 
-		c.JSON(200, gin.H{
-			"code":    200,
-			"status":  "successful",
-			"message": "Disbursement has been successfully processed and settled.",
-			"data": gin.H{
-				"transaction_id":     xTref,
-				"external_reference": tCode,
-			},
-		})
-		return
-	}
-
-	if network == "zamtel" {
-		elapsed := time.Since(start).Milliseconds()
-		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/mobile-money/disburse", "POST", "success", strconv.FormatInt(elapsed, 10))
-
-		c.JSON(200, gin.H{
-			"code":    200,
-			"status":  "successful",
-			"message": "Disbursement has been successfully processed and settled.",
-			"data": gin.H{
-				"transaction_id": xTref,
-				"external_id":    tCode,
-			},
-		})
-		return
-	}
+	c.JSON(200, gin.H{
+		"code":    200,
+		"status":  "successful",
+		"message": "Funds disbursed successfully",
+		"data": gin.H{
+			"transaction_id":     xTref,
+			"external_reference": tCode,
+		},
+	})
 
 }

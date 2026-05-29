@@ -76,7 +76,7 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 
 	checkoutID := uuid.New()
 
-	checkoutUrl := req.CheckoutBaseUrl + checkoutID.String()
+	checkoutUrl := "https://pgsandbox.mygeepay.com/merchant/hosted-checkout/" + checkoutID.String()
 
 	returnUrl := ""
 
@@ -142,7 +142,7 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 
 	c.JSON(200, gin.H{
 		"status":       "success",
-		"message":      "Checkout session created",
+		"message":      "Checkout session created.",
 		"checkout_url": checkoutUrl,
 	})
 
