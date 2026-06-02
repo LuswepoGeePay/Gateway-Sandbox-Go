@@ -6,6 +6,7 @@ import (
 	"pg_sandbox/models"
 	pbToken "pg_sandbox/proto/token"
 	"pg_sandbox/utils"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
@@ -33,10 +34,12 @@ func GenerateOAuthToken(req *pbToken.TokenRequest) (*pbToken.TokenResponse, erro
 		return nil, utils.CapitalizeError("user not found")
 	}
 
+	expirationTime := time.Now().UTC().Add(1 * time.Hour).Unix()
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id":   apiKey.UserID,
 		"client_id": req.ClientId,
-		"exp":       3600,
+		"exp":       expirationTime,
 	})
 
 	tokenString, err := token.SignedString(jwtSecret)
@@ -65,6 +68,7 @@ func ValidateOAuthToken(tokenString string) error {
 	})
 
 	if err != nil || !token.Valid {
+		utils.Log(slog.LevelError, "invalid token", "error", err)
 		return utils.CapitalizeError("invalid token")
 	}
 

@@ -1,6 +1,7 @@
 package commonservices
 
 import (
+	"log/slog"
 	tokenservices "pg_sandbox/services/token_services"
 	"pg_sandbox/utils"
 	"strings"
@@ -20,7 +21,10 @@ func CheckEssentialHeaders(c *gin.Context) {
 		})
 		c.Abort()
 		return
+
 	}
+
+	utils.Log(slog.LevelInfo, "Authorization Header: ", authorization)
 
 	tokenString := strings.TrimPrefix(authorization, "Bearer ")
 
