@@ -45,3 +45,6 @@
 {"time":"2026-05-29T11:01:37.9184261+02:00","level":"ERROR","msg":"❌Error","Unable to Login, user not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
 {"time":"2026-05-29T13:16:53.5155315+02:00","level":"ERROR","msg":"❌Error","Unable to Login":"detail","record not found":"data","!BADKEY":{"email":"luswepo17gmail.com"}}
 {"time":"2026-05-29T13:16:53.5155315+02:00","level":"ERROR","msg":"❌Error","Unable to Login, user not found":"data","!BADKEY":{"email":"luswepo17gmail.com"}}
+{"time":"2026-06-02T11:38:14.5539277+02:00","level":"ERROR","msg":"wrong grant type","data":{"grant_type":""}}
+{"time":"2026-06-02T11:42:24.8176131+02:00","level":"ERROR","msg":"wrong grant type","data":{"grant_type":""}}
+{"time":"2026-06-02T11:42:48.1005669+02:00","level":"ERROR","msg":"wrong grant type","data":{"grant_type":""}}

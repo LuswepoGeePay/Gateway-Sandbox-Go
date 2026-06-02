@@ -8,16 +8,27 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TokenHTTPRequest struct {
+	GrantType    string `form:"grant_type" json:"grant_type"`
+	ClientId     string `form:"client_id" json:"client_id"`
+	ClientSecret string `form:"client_secret" json:"client_secret"`
+}
+
 func AuthorizationHandler(c *gin.Context) {
 
-	var req token.TokenRequest
+	var httpReq TokenHTTPRequest
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBind(&httpReq); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data"})
 		return
 	}
 
-	response, err := tokenservices.GenerateOAuthToken(&req)
+	req := &token.TokenRequest{
+		GrantType:    httpReq.GrantType,
+		ClientId:     httpReq.ClientId,
+		ClientSecret: httpReq.ClientSecret,
+	}
+	response, err := tokenservices.GenerateOAuthToken(req)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
