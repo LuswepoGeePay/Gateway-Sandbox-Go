@@ -84,3 +84,4 @@
 {"time":"2026-06-05T13:52:58.1322104+02:00","level":"ERROR","msg":"unable to find user","data":{"client_id":"de782a8c-b8f5-4222-8f7c-a76df1ad09ee","client_secret":"tmi+ys/OFpTGGLJnzia2KUJlLSXGXQWwzMHyENrTISs="}}
 {"time":"2026-06-05T13:53:42.684857+02:00","level":"INFO","msg":"Authorization Header: ","!BADKEY":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJiYzdjOGIxNi04ZjRhLTRiNTgtODMyOS00OTc2YTk0OGIxMTUiLCJleHAiOjE3ODA2NjM5OTksInVzZXJfaWQiOiJiMjE0ZTUyMy02ZTMyLTRhYmYtYmQxYS05Mjc2N2FhZjg2MTAifQ.-4MiouxBxnmf4VWHUlAAekbKhPoscGpy3rTnCGwVAAg"}
 {"time":"2026-06-05T13:53:42.7220031+02:00","level":"INFO","msg":"✅Info","Transaction Status Retrieved":"endpoint","/v1/mobile-money/check-status/":"reference","!BADKEY":"9dd9b8de-4ef4-4b48-b67d-07f1303303b7"}
+{"time":"2026-06-05T14:01:22.3517398+02:00","level":"INFO","msg":"Transaction auto-resolved to successful","tx_id":"96b4f205-46f5-4276-acc7-4fa87967d4dc","ref":"b6125e95-462c-455d-be6e-859678e0e9a9"}
