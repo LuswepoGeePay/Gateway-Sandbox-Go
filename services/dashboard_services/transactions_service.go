@@ -92,10 +92,13 @@ func GetTransactionStatistics() (*dashboard.TransactionStatisticsResponse, error
 	}, nil
 }
 
-func GetTransactions(req *dashboard.GetTransactionsRequest) (*dashboard.GetTransactionsResponse, error) {
+func GetTransactions(req *dashboard.GetTransactionsRequest, merchantID string) (*dashboard.GetTransactionsResponse, error) {
 	var transactions []models.Transactions
 
 	query := config.DB.Model(&models.Transactions{})
+	if merchantID != "" {
+		query = query.Where("user_id = ?", merchantID)
+	}
 
 	var totalTransactions int64
 	err := query.Count(&totalTransactions).Error

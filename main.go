@@ -4,6 +4,7 @@ import (
 	"log"
 	"pg_sandbox/config"
 	"pg_sandbox/routes"
+	"pg_sandbox/services/jobs"
 	"pg_sandbox/utils"
 
 	"github.com/gin-contrib/cors"
@@ -19,6 +20,8 @@ func main() {
 	}
 
 	config.InitDB()
+
+	jobs.StartTransactionResolver()
 
 	r := gin.Default()
 

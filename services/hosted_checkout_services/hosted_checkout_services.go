@@ -112,13 +112,15 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 
 	generatedCheckoutUrl := models.CheckOutUrls{
 		ID:            checkoutID,
+		UserID:        existingClient.UserID,
 		OrderID:       req.OrderId,
 		Amount:        strconv.FormatFloat(float64(req.Amount), 'f', -1, 64),
 		CustomerName:  req.Customer.Name,
 		CustomerEmail: req.Customer.Email,
 		ReturnUrl:     returnUrl,
 		GeneratedUrl:  checkoutUrl,
-		TReference:    xTref,
+		// TReference:    xTref,
+		CallbackUrl: xCallbackUrl,
 	}
 
 	result = tx.Create(&generatedCheckoutUrl)

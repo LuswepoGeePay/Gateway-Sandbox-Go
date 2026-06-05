@@ -57,22 +57,25 @@ type Role struct {
 }
 
 type Transactions struct {
-	ID        uuid.UUID `gorm:"type:uuid;primary_key"`
-	UserID    uuid.UUID `gorm:"type:uuid;not null"`
-	User      User      `gorm:"foreignKey:UserID"`
-	Reference string    `gorm:"not null"`
-	Amount    string    `gorm:"not null"`
-	Status    string    `gorm:"not null"`
-	Customer  string    `gorm:"not null"`
-	Channel   string    `gorm:"not null"`
-	Type      string    `gorm:"not null"`
-	Narration string    `gorm:"default:null"`
-	Date      time.Time
+	ID          uuid.UUID `gorm:"type:uuid;primary_key"`
+	UserID      uuid.UUID `gorm:"type:uuid;not null"`
+	User        User      `gorm:"foreignKey:UserID"`
+	Reference   string    `gorm:"not null"`
+	Amount      string    `gorm:"not null"`
+	Status      string    `gorm:"not null"`
+	Customer    string    `gorm:"not null"`
+	Channel     string    `gorm:"not null"`
+	Type        string    `gorm:"not null"`
+	Narration   string    `gorm:"default:null"`
+	CallbackUrl string    `gorm:"default:null"`
+	Date        time.Time
 	gorm.Model
 }
 
 type CheckOutUrls struct {
 	ID            uuid.UUID `gorm:"type:uuid;primary_key"`
+	UserID        uuid.UUID `gorm:"type:uuid;not null"`
+	User          User      `gorm:"foreignKey:UserID"`
 	OrderID       string    `gorm:"default:null"`
 	CustomerName  string    `gorm:"default:null"`
 	CustomerEmail string    `gorm:"default:null"`
@@ -82,7 +85,7 @@ type CheckOutUrls struct {
 	CancelUrl     string    `gorm:"type:text"`
 	Amount        string    `gorm:"default:null"`
 	GeneratedUrl  string    `gorm:"default:null"`
-	TReference    string    `gorm:"default:null"`
+	CallbackUrl   string    `gorm:"default:null"`
 	gorm.Model
 }
 

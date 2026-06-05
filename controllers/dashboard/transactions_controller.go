@@ -1,6 +1,7 @@
 package dashboard
 
 import (
+	"pg_sandbox/config"
 	"pg_sandbox/models"
 	"pg_sandbox/proto/dashboard"
 	dashboardservices "pg_sandbox/services/dashboard_services"
@@ -40,7 +41,18 @@ func GetTransactionsHandler(c *gin.Context) {
 		PageSize: int32(getRequest.PageSize),
 	}
 
-	transactions, err := dashboardservices.GetTransactions(req)
+	userID, exists := c.Get("userID")
+	merchantID := ""
+	if exists {
+		var user models.User
+		if err := config.DB.Preload("Role").Where("id = ?", userID).First(&user).Error; err == nil {
+			if user.Role.Name == "merchant" {
+				merchantID = user.ID.String()
+			}
+		}
+	}
+
+	transactions, err := dashboardservices.GetTransactions(req, merchantID)
 
 	if err != nil {
 		utils.RespondWithError(c, 400, utils.FailedToRetrieve("transactions"), err.Error())
