@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"pg_sandbox/models"
-	"pg_sandbox/seeders"
 
 	"log"
 
@@ -43,13 +42,13 @@ func InitDB() {
 
 	fmt.Println("Database connected successfully")
 
-	if err := seeders.SeedRoles(DB); err != nil {
-		log.Fatalf("failed to seed roles: %v", err)
-	}
+	// if err := seeders.SeedRoles(DB); err != nil {
+	// 	log.Fatalf("failed to seed roles: %v", err)
+	// }
 
-	if err := seeders.SeedAdminUser(DB); err != nil {
-		log.Fatalf("failed to seed admin user: %v", err)
-	}
+	// if err := seeders.SeedAdminUser(DB); err != nil {
+	// 	log.Fatalf("failed to seed admin user: %v", err)
+	// }
 }
 
 func LoadEnv() {
