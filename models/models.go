@@ -74,7 +74,7 @@ type Transactions struct {
 
 type CheckOutUrls struct {
 	ID            uuid.UUID `gorm:"type:uuid;primary_key"`
-	UserID        uuid.UUID `gorm:"type:uuid;not null"`
+	UserID        uuid.UUID `gorm:"type:uuid;default:null"`
 	User          User      `gorm:"foreignKey:UserID"`
 	OrderID       string    `gorm:"default:null"`
 	CustomerName  string    `gorm:"default:null"`
