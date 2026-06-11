@@ -73,19 +73,17 @@ type Transactions struct {
 }
 
 type CheckOutUrls struct {
-	ID            uuid.UUID `gorm:"type:uuid;primary_key"`
-	UserID        uuid.UUID `gorm:"type:uuid;default:null"`
-	User          User      `gorm:"foreignKey:UserID"`
-	OrderID       string    `gorm:"default:null"`
-	CustomerName  string    `gorm:"default:null"`
-	CustomerEmail string    `gorm:"default:null"`
-	ReturnUrl     string    `gorm:"type:text"`
-	SuccessUrl    string    `gorm:"type:text"`
-	FailedUrl     string    `gorm:"type:text"`
-	CancelUrl     string    `gorm:"type:text"`
-	Amount        string    `gorm:"default:null"`
-	GeneratedUrl  string    `gorm:"default:null"`
-	CallbackUrl   string    `gorm:"default:null"`
+	ID                   uuid.UUID `gorm:"type:uuid;primary_key"`
+	UserID               uuid.UUID `gorm:"type:uuid;default:null"`
+	User                 User      `gorm:"foreignKey:UserID"`
+	OrderID              string    `gorm:"default:null"`
+	CustomerName         string    `gorm:"default:null"`
+	CustomerEmail        string    `gorm:"default:null"`
+	ReturnUrl            string    `gorm:"type:text"`
+	Amount               string    `gorm:"default:null"`
+	GeneratedUrl         string    `gorm:"default:null"`
+	CallbackUrl          string    `gorm:"default:null"`
+	TransactionReference string    `gorm:"default:null"`
 	gorm.Model
 }
 

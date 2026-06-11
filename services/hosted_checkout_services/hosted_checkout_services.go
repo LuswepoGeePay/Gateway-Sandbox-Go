@@ -83,44 +83,74 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 	var returnUrlParsed *url.URL
 	var err error
 
-	if req.ReceiptRedirect {
-		returnUrlParsed, err = url.Parse(req.ReturnUrl)
-		if err != nil {
-			c.JSON(400, gin.H{
-				"code":    400,
-				"status":  "error",
-				"message": "Invalid return URL provided",
-			})
-			return
-		}
-
-		txCode := utils.GenerateTenDigitCode()
-		params := returnUrlParsed.Query()
-		params.Set("status", "successful")
-		params.Set("message", "Your transaction was completed successfully.") // customize if needed
-		params.Set("transaction_reference", xTref)
-		params.Set("external_reference", txCode)
-
-		returnUrlParsed.RawQuery = params.Encode()
+	// if req.ReceiptRedirect {
+	returnUrlParsed, err = url.Parse(req.ReturnUrl)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"code":    400,
+			"status":  "error",
+			"message": "Invalid return URL provided",
+		})
+		return
 	}
 
-	if req.ReceiptRedirect {
-		returnUrl = returnUrlParsed.String()
-	} else {
-		returnUrl = req.ReturnUrl
+	txCode := utils.GenerateTenDigitCode()
+	params := returnUrlParsed.Query()
+	params.Set("status", "successful")
+	params.Set("message", "Your transaction was completed successfully.") // customize if needed
+	params.Set("transaction_reference", xTref)
+	params.Set("external_reference", txCode)
+
+	returnUrlParsed.RawQuery = params.Encode()
+	// }
+
+	// if req.ReceiptRedirect {
+	returnUrl = returnUrlParsed.String()
+	// } else {
+	// 	returnUrl = req.ReturnUrl
+	// }
+
+	transaction := models.Transactions{
+		ID:          uuid.New(),
+		Reference:   xTref,
+		Channel:     "mobile_money",
+		Customer:    "000000000000",
+		Amount:      strconv.FormatFloat(float64(req.Amount), 'f', -1, 64),
+		Status:      "pending",
+		Type:        "collection",
+		Date:        time.Now(),
+		UserID:      existingClient.UserID,
+		CallbackUrl: xCallbackUrl,
+	}
+
+	result = tx.Create(&transaction)
+
+	if result.Error != nil {
+		elapsed := time.Since(start).Milliseconds()
+		logs.LogApiCall(c, existingClient.UserID.String(), "/v1/checkout/session", "POST", "failed", strconv.FormatInt(elapsed, 10))
+
+		c.JSON(500, gin.H{
+			"code":    500,
+			"status":  "error",
+			"message": "Server error.",
+			"errors": gin.H{
+				"Transaction": []string{"Failed to save transaction."},
+			},
+		})
+		return
 	}
 
 	generatedCheckoutUrl := models.CheckOutUrls{
-		ID:            checkoutID,
-		UserID:        existingClient.UserID,
-		OrderID:       req.OrderId,
-		Amount:        strconv.FormatFloat(float64(req.Amount), 'f', -1, 64),
-		CustomerName:  req.Customer.Name,
-		CustomerEmail: req.Customer.Email,
-		ReturnUrl:     returnUrl,
-		GeneratedUrl:  checkoutUrl,
-		// TReference:    xTref,
-		CallbackUrl: xCallbackUrl,
+		ID:                   checkoutID,
+		UserID:               existingClient.UserID,
+		OrderID:              req.OrderId,
+		Amount:               strconv.FormatFloat(float64(req.Amount), 'f', -1, 64),
+		CustomerName:         req.Customer.Name,
+		CustomerEmail:        req.Customer.Email,
+		ReturnUrl:            returnUrl,
+		GeneratedUrl:         checkoutUrl,
+		TransactionReference: xTref,
+		CallbackUrl:          xCallbackUrl,
 	}
 
 	result = tx.Create(&generatedCheckoutUrl)
