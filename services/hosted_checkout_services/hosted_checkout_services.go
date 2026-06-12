@@ -80,16 +80,15 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 
 	returnUrl := ""
 
-	var returnUrlParsed *url.URL
-	var err error
+	slog.Info("Received Return URL", "url", req.ReturnUrl)
 
-	// if req.ReceiptRedirect {
-	returnUrlParsed, err = url.Parse(req.ReturnUrl)
-	if err != nil {
+	// Parse ReturnUrl and append required query parameters
+	returnUrlParsed, err := url.Parse(req.ReturnUrl)
+	if err != nil || returnUrlParsed.Scheme == "" || returnUrlParsed.Host == "" {
 		c.JSON(400, gin.H{
 			"code":    400,
 			"status":  "error",
-			"message": "Invalid return URL provided",
+			"message": "Return URL must be a valid absolute URL",
 		})
 		return
 	}
@@ -97,19 +96,13 @@ func GenerateCheckoutUrl(c *gin.Context, req *hcheckout.HCheckoutRequest, xClien
 	txCode := utils.GenerateTenDigitCode()
 	params := returnUrlParsed.Query()
 	params.Set("status", "successful")
-	params.Set("message", "Your transaction was completed successfully.") // customize if needed
+	params.Set("message", "Your transaction was completed successfully.")
 	params.Set("transaction_reference", xTref)
 	params.Set("external_reference", txCode)
-
 	returnUrlParsed.RawQuery = params.Encode()
-	// }
-
-	// if req.ReceiptRedirect {
 	returnUrl = returnUrlParsed.String()
-	// } else {
-	// 	returnUrl = req.ReturnUrl
-	// }
 
+	slog.Info("Generated Return URL", "url", returnUrl)
 	transaction := models.Transactions{
 		ID:          uuid.New(),
 		Reference:   xTref,
