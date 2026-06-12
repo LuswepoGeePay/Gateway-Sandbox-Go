@@ -84,6 +84,9 @@ func LoginUser(req *auth.LoginRequest) (*auth.AuthResponse, int, error) {
 		return nil, http.StatusForbidden, utils.CapitalizeError(fmt.Sprintf("User with role '%s' cannot access the '%s' portal", userRole, requestedPortal))
 	}
 
+	// merchantId := ""
+	// var merchant
+
 	return &auth.AuthResponse{
 		Success:       true,
 		Status:        "success",
@@ -96,5 +99,6 @@ func LoginUser(req *auth.LoginRequest) (*auth.AuthResponse, int, error) {
 		EmailVerified: user.EmailVerified,
 		AccountStatus: user.Status,
 		Email:         user.Email,
+		// MerchantId: merchantId,
 	}, 200, nil
 }

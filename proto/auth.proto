@@ -63,8 +63,9 @@ message AuthResponse {
     string role = 5;
     string id = 6;
     repeated string permissions = 7; // List of permissions granted to the user
-    string tokenExpiry =9;
-    bool emailVerified =10;
-    string accountStatus =11;
+    string token_expiry =9;
+    bool email_verified =10;
+    string account_status =11;
     string email = 12;
+    string merchant_id =13;
 }

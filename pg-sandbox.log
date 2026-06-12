@@ -97,3 +97,6 @@
 {"time":"2026-06-11T23:16:51.561378+02:00","level":"INFO","msg":"Transaction auto-resolved to successful","tx_id":"1302634f-bf3b-401f-a164-be4f20b5db63","ref":"7b06bed5-c88e-4911-a839-9ce80c27aee6"}
 {"time":"2026-06-11T23:22:00.674647+02:00","level":"INFO","msg":"Authorization Header: ","!BADKEY":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJiYzdjOGIxNi04ZjRhLTRiNTgtODMyOS00OTc2YTk0OGIxMTUiLCJleHAiOjE3ODEyMTUyMzUsInVzZXJfaWQiOiJiMjE0ZTUyMy02ZTMyLTRhYmYtYmQxYS05Mjc2N2FhZjg2MTAifQ.0YOMKmK2QHbC0GfFv6SdyO6Hg58b8tbLY-ZKPW8Z5Hg"}
 {"time":"2026-06-11T23:22:24.7979713+02:00","level":"INFO","msg":"Transaction auto-resolved to successful","tx_id":"20f54738-7d40-45b4-963c-6fafb0cb1012","ref":"1ba62c1f-dcdd-4eea-a40c-5fbdf0b57c81"}
+{"time":"2026-06-11T23:52:18.0590944+02:00","level":"ERROR","msg":"❌Error","Unable to Login":"detail","record not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
+{"time":"2026-06-11T23:52:18.0760411+02:00","level":"ERROR","msg":"❌Error","Unable to Login, user not found":"data","!BADKEY":{"email":"blessedezeala@gmail.com"}}
+{"time":"2026-06-12T00:03:34.4830464+02:00","level":"ERROR","msg":"❌Error","unable to validate token":"data","!BADKEY":{"error":{"Inner":{},"Errors":16}}}

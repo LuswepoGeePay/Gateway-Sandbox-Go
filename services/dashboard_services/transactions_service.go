@@ -92,12 +92,36 @@ func GetTransactionStatistics() (*dashboard.TransactionStatisticsResponse, error
 	}, nil
 }
 
-func GetTransactions(req *dashboard.GetTransactionsRequest, merchantID string) (*dashboard.GetTransactionsResponse, error) {
+func GetTransactions(req *dashboard.GetTransactionsRequest) (*dashboard.GetTransactionsResponse, error) {
 	var transactions []models.Transactions
 
 	query := config.DB.Model(&models.Transactions{})
-	if merchantID != "" {
-		query = query.Where("user_id = ?", merchantID)
+	if req.UserId != "" {
+		query = query.Where("user_id = ?", req.UserId)
+	}
+
+	if req.TransactionType != "" {
+		query = query.Where("type = ?", req.TransactionType)
+	}
+
+	if req.StartDate != "" {
+		query = query.Where("created_at >= ?", req.StartDate)
+	}
+
+	if req.EndDate != "" {
+		query = query.Where("created_at <= ?", req.EndDate)
+	}
+
+	if req.Status != "" {
+		query = query.Where("status = ?", req.Status)
+	}
+
+	if req.Channel != "" {
+		query = query.Where("channel = ?", req.Channel)
+	}
+
+	if req.TransactionReference != "" {
+		query = query.Where("reference = ?", req.TransactionReference)
 	}
 
 	var totalTransactions int64
@@ -143,11 +167,48 @@ func GetTransactions(req *dashboard.GetTransactionsRequest, merchantID string) (
 			Date:      transaction.Date.Format(time.RFC3339),
 		}
 	}
+
+	var totalsuccessful int64
+	err = query.Where("status = ?", "successful").Count(&totalsuccessful).Error
+	if err != nil {
+		return nil, utils.CapitalizeError("failed to count successful transactions")
+	}
+
+	var totalfailed int64
+	err = query.Where("status = ?", "failed").Count(&totalfailed).Error
+	if err != nil {
+		return nil, utils.CapitalizeError("failed to count failed transactions")
+	}
+
+	var totalpending int64
+	err = query.Where("status = ?", "pending").Count(&totalpending).Error
+	if err != nil {
+		return nil, utils.CapitalizeError("failed to count pending transactions")
+	}
+
+	var totalamount float64
+	err = query.Select("amount").Find(&transactions).Error
+	if err != nil {
+		return nil, utils.CapitalizeError("failed to fetch transactions for amount sum")
+	}
+
+	for _, transaction := range transactions {
+		amountTotal, err := strconv.ParseFloat(transaction.Amount, 64)
+		if err != nil {
+			continue
+		}
+		totalamount += amountTotal
+	}
+
 	return &dashboard.GetTransactionsResponse{
-		Transaction: pbtransactions,
-		TotalPages:  totalPages,
-		CurrentPage: req.Page,
-		HasMore:     req.Page < totalPages,
+		Transactions:      pbtransactions,
+		TotalPages:        totalPages,
+		CurrentPage:       req.Page,
+		TotalTransactions: int32(totalTransactions),
+		TotalSuccessful:   int32(totalsuccessful),
+		TotalFailed:       int32(totalfailed),
+		TotalPending:      int32(totalpending),
+		HasMore:           req.Page < totalPages,
 	}, nil
 }
 

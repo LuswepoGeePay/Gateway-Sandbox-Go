@@ -1,11 +1,10 @@
 package dashboard
 
 import (
-	"pg_sandbox/config"
-	"pg_sandbox/models"
 	"pg_sandbox/proto/dashboard"
 	dashboardservices "pg_sandbox/services/dashboard_services"
 	"pg_sandbox/utils"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,32 +26,42 @@ func GetTransactionInfoHandler(c *gin.Context) {
 
 func GetTransactionsHandler(c *gin.Context) {
 
-	var getRequest models.GetRequest
+	status := c.Query("status")
+	page := c.Query("page")
+	pageSize := c.Query("page_size")
+	transactionReference := c.Query("transaction_reference")
+	customer := c.Query("customer")
+	externalReference := c.Query("external_reference")
+	transactionType := c.Query("transaction_type")
+	channel := c.Query("channel")
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
 
-	if err := c.ShouldBindJSON(&getRequest); err != nil {
+	pageSizeInt, err := strconv.Atoi(pageSize)
+	if err != nil {
+		utils.RespondWithError(c, 400, utils.InvReqBody, err.Error())
+		return
+	}
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
 		utils.RespondWithError(c, 400, utils.InvReqBody, err.Error())
 		return
 	}
 
-	getRequest.SetDefaults()
-
-	req := &dashboard.GetTransactionsRequest{
-		Page:     int32(getRequest.Page),
-		PageSize: int32(getRequest.PageSize),
+	req := dashboard.GetTransactionsRequest{
+		Page:                 int32(pageInt),
+		PageSize:             int32(pageSizeInt),
+		Status:               status,
+		TransactionReference: transactionReference,
+		Customer:             customer,
+		ExternalReference:    externalReference,
+		TransactionType:      transactionType,
+		Channel:              channel,
+		StartDate:            startDate,
+		EndDate:              endDate,
 	}
 
-	userID, exists := c.Get("userID")
-	merchantID := ""
-	if exists {
-		var user models.User
-		if err := config.DB.Preload("Role").Where("id = ?", userID).First(&user).Error; err == nil {
-			if user.Role.Name == "merchant" {
-				merchantID = user.ID.String()
-			}
-		}
-	}
-
-	transactions, err := dashboardservices.GetTransactions(req, merchantID)
+	transactions, err := dashboardservices.GetTransactions(&req)
 
 	if err != nil {
 		utils.RespondWithError(c, 400, utils.FailedToRetrieve("transactions"), err.Error())
@@ -60,7 +69,7 @@ func GetTransactionsHandler(c *gin.Context) {
 	}
 
 	utils.RespondWithSuccess(c, utils.SuccessfullyRetrieve("transactions"), gin.H{
-		"transactions": transactions,
+		"data": transactions,
 	})
 }
 

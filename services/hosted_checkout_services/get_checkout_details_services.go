@@ -28,3 +28,7 @@ func GetCheckoutDetails(checkoutID string) (*hcheckout.HCheckout, error) {
 		Amount:    checkout.Amount,
 	}, nil
 }
+
+func GetHostedCh() {
+
+}

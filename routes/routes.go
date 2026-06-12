@@ -96,7 +96,7 @@ func SetupRoutes(r *gin.Engine) {
 
 	//dashboard-transactions-tab
 	au.GET("/dashboard/transactions/info", dashboard.GetTransactionInfoHandler)
-	au.POST("/dashboard/transactions", dashboard.GetTransactionsHandler)
+	au.GET("/dashboard/transactions", dashboard.GetTransactionsHandler)
 	au.GET("/dashboard/transactions/channels", dashboard.GetTransactionsChannelHandler)
 
 	//cards

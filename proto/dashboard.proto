@@ -140,14 +140,28 @@ message Activity {
 message GetTransactionsRequest {
     int32 page =1;
     int32 pageSize =2;
+    string user_id =3;
+    string transaction_type =4;
+    string start_date =5;
+    string end_date =6;
+    string status =7;
+    string channel =8;
+    string  external_reference =9;
+    string  transaction_reference=10;
+    string customer =11;
   
 }
 
 message GetTransactionsResponse {
-    repeated Transaction transaction = 1;       // List of users
-    int32 totalPages = 2;         // Total number of pages
-    int32 currentPage = 3;        // Current page
-    bool hasMore = 4;             // Whether there are more pages
+    repeated Transaction transactions = 1;       // List of users
+    int32 total_pages = 2;         // Total number of pages
+    int32 current_page = 3;        // Current page
+    bool has_more = 4;             // Whether there are more pages
+    int32 total_transactions = 5; // Total number of transactions
+    int32 total_successful = 6; // Total number of successful transactions
+    int32 total_failed = 7; // Total number of failed transactions
+    int32 total_pending = 8; // Total number of pending transactions
+    
   }
 
 
