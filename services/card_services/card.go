@@ -218,16 +218,16 @@ func SendCodeAccountHolder(req *card.RequestCode) error {
 	}
 
 	m := gomail.NewMessage()
-	m.SetHeader("From", "gpgsnoreply@gmail.com")
+	m.SetHeader("From", "goodfellowtechnoreply@gmail.com")
 	m.SetHeader("To", user.Email)
 	m.SetHeader("Subject", "OTP Code")
 	m.SetBody("text/html", body.String())
 
 	d := gomail.NewDialer(
 		"smtp.gmail.com",        // MAIL_HOST
-		465,                     // MAIL_PORT
-		"gpgsnoreply@gmail.com", // MAIL_USERNAME
-		"pbeb pnvy kdkt ykze",   // MAIL_PASSWORD
+		587,                     // MAIL_PORT
+		"goodfellowtechnoreply@gmail.com", // MAIL_USERNAME
+		"dyxe izig aodz jcpk",   // MAIL_PASSWORD
 	)
 	d.SSL = true
 	d.TLSConfig = &tls.Config{ServerName: "smtp.gmail.com"}

@@ -34,21 +34,16 @@ func SendCodeMail(req *mail.SendMailRequest) error {
 	}
 
 	m := gomail.NewMessage()
-	m.SetHeader("From", "gpgsnoreply@gmail.com")
+	m.SetHeader("From", "goodfellowtechnoreply@gmail.com")
 	m.SetHeader("To", req.To)
 	m.SetHeader("Subject", req.Subject)
 	m.SetBody("text/html", body.String())
 
-	// d := gomail.NewDialer(
-	// 	"smtp.gmail.com",
-	// 	587,
-	// 	"luswepo17@gmail.com",
-	// 	"dqiemeknokcbuexh")
 	d := gomail.NewDialer(
 		"smtp.gmail.com",        // MAIL_HOST
-		465,                     // MAIL_PORT
-		"gpgsnoreply@gmail.com", // MAIL_USERNAME
-		"pbeb pnvy kdkt ykze",   // MAIL_PASSWORD
+		587,                     // MAIL_PORT
+		"goodfellowtechnoreply@gmail.com", // MAIL_USERNAME
+		"dyxe izig aodz jcpk",   // MAIL_PASSWORD
 	)
 	d.SSL = true
 	d.TLSConfig = &tls.Config{ServerName: "smtp.gmail.com"}
@@ -169,12 +164,12 @@ func SendChangePasswordCode(req *mail.SendMailRequest) error {
 	}
 
 	m := gomail.NewMessage()
-	m.SetHeader("From", "luswepo17@gmail.com")
+	m.SetHeader("From", "goodfellowtechnoreply@gmail.com")
 	m.SetHeader("To", req.To)
 	m.SetHeader("Subject", "Password Reset!")
 	m.SetBody("text/html", body.String())
 
-	d := gomail.NewDialer("smtp.gmail.com", 587, "luswepo17@gmail.com", "dqiemeknokcbuexh")
+	d := gomail.NewDialer("smtp.gmail.com", 587, "goodfellowtechnoreply@gmail.com", "dyxe izig aodz jcpk")
 	if err := d.DialAndSend(m); err != nil {
 		return err
 	}
