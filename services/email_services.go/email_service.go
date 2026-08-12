@@ -45,7 +45,6 @@ func SendCodeMail(req *mail.SendMailRequest) error {
 		"goodfellowtechnoreply@gmail.com", // MAIL_USERNAME
 		"dyxe izig aodz jcpk",   // MAIL_PASSWORD
 	)
-	d.SSL = true
 	d.TLSConfig = &tls.Config{ServerName: "smtp.gmail.com"}
 
 	// Add timeout
