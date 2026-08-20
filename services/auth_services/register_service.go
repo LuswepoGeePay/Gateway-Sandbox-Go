@@ -41,13 +41,14 @@ func RegisterUser(c *gin.Context, req *auth.RegisterRequest) (*string, error) {
 
 	userId := uuid.New()
 	user := models.User{
-		ID:       userId,
-		Fullname: req.Fullname,
-		Email:    req.Email,
-		Password: string(hashedPassword),
-		Phone:    req.Phone,
-		Role:     role,
-		Status:   "active",
+		ID:            userId,
+		Fullname:      req.Fullname,
+		Email:         req.Email,
+		Password:      string(hashedPassword),
+		Phone:         req.Phone,
+		Role:          role,
+		Status:        "active",
+		EmailVerified: true,
 	}
 
 	result = tx.Create(&user)

@@ -40,6 +40,17 @@ func LoginUser(req *auth.LoginRequest) (*auth.AuthResponse, int, error) {
 		return nil, http.StatusInternalServerError, utils.CapitalizeError("invalid credentials")
 	}
 
+	if !user.EmailVerified {
+		if err := config.DB.Model(&user).Update("email_verified", true).Error; err != nil {
+			utils.Log(slog.LevelError, "❌Error", "Unable to mark email verified on login", "detail", err.Error(), "data", gin.H{
+				"email":   req.Email,
+				"user_id": user.ID,
+			})
+			return nil, http.StatusInternalServerError, utils.CapitalizeError("failed to update user verification status")
+		}
+		user.EmailVerified = true
+	}
+
 	token, tokenExpiry, err := GenerateJWT(user.ID.String())
 	if err != nil {
 		utils.Log(slog.LevelError, "❌Error", "Unable to Login, unable to create token", "data", gin.H{
