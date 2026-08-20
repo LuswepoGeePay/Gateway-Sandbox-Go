@@ -4,6 +4,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
+
 	"pg_sandbox/proto/api"
 	"pg_sandbox/proto/user"
 	commonservices "pg_sandbox/services/common_services"
@@ -20,6 +22,27 @@ func NameLookUpHandler(c *gin.Context) {
 	if number == "" {
 		number = c.Param("number")
 	}
+
+	// #region agent log
+	lastCh := ""
+	if len(number) > 0 {
+		lastCh = number[len(number)-1:]
+	}
+	utils.AgentDebugLog("user_controller.go:NameLookUpHandler", "name-lookup entry", "A,B,C,D", map[string]interface{}{
+		"method":         c.Request.Method,
+		"fullPath":       c.FullPath(),
+		"rawPath":        c.Request.URL.Path,
+		"phoneParam":     c.Param("phone"),
+		"numberParam":    c.Param("number"),
+		"resolvedNumber": number,
+		"numberLen":      len(number),
+		"lastChar":       lastCh,
+		"contentType":    c.GetHeader("Content-Type"),
+		"accept":         c.GetHeader("Accept"),
+		"hasAuth":        c.GetHeader("Authorization") != "",
+		"authScheme":     strings.SplitN(c.GetHeader("Authorization"), " ", 2)[0],
+	})
+	// #endregion
 
 	commonservices.CheckEssentialHeaders(c)
 

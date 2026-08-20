@@ -11,6 +11,20 @@ func NameLookUp(c *gin.Context, phoneNumber string) {
 
 	network, err := utils.GetNetworkProvider(phoneNumber)
 
+	// #region agent log
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
+	utils.AgentDebugLog("name_lookup_service.go:NameLookUp", "GetNetworkProvider result", "C,E", map[string]interface{}{
+		"phoneNumber": phoneNumber,
+		"network":     network,
+		"err":         errStr,
+		"startsPlus26": len(phoneNumber) >= 3 && phoneNumber[:3] == "+26",
+		"starts26":     len(phoneNumber) >= 2 && phoneNumber[:2] == "26",
+	})
+	// #endregion
+
 	if err != nil {
 		utils.Log(slog.LevelError, "❌Error", "Validation failed.", "endpoint", "/v1/mobile-money/name-lookup/", "number", phoneNumber)
 		c.JSON(400, gin.H{

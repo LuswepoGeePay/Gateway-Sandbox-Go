@@ -2,9 +2,11 @@ package utils
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/rand"
+	"os"
 	"strings"
 	"time"
 )
@@ -12,6 +14,38 @@ import (
 func CapitalizeError(msg string) error {
 	return errors.New(strings.ToUpper(msg[:1]) + msg[1:])
 }
+
+// #region agent log
+func AgentDebugLog(location, message, hypothesisId string, data map[string]interface{}) {
+	paths := []string{
+		`c:\Users\WIVWA\Documents\PROJECTS\#GO\Gateway-Sandbox-Go\debug-b15ff4.log`,
+		`debug-b15ff4.log`,
+	}
+	var f *os.File
+	var err error
+	for _, p := range paths {
+		f, err = os.OpenFile(p, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err == nil {
+			break
+		}
+	}
+	if f == nil {
+		return
+	}
+	defer f.Close()
+	entry := map[string]interface{}{
+		"sessionId":    "b15ff4",
+		"timestamp":    time.Now().UnixMilli(),
+		"location":     location,
+		"message":      message,
+		"hypothesisId": hypothesisId,
+		"data":         data,
+	}
+	b, _ := json.Marshal(entry)
+	f.Write(append(b, '\n'))
+}
+
+// #endregion
 
 // GetNetworkProvider returns the network provider based on the phone number prefix
 func GetNetworkProvider(phonenumber string) (string, error) {
